@@ -1,0 +1,51 @@
+Let's see what this will do for us in cmdline.
+I'd still like to know the actual diff/meaning of certain thigns but oh well.
+
+So there are three data streams connected to the commandline;
+	STDIN (0) - Standard Input (data fed into the program)
+	STDOUT (1) - Standard Output (data printed by the program, default of the terminal)
+	STDERR (2) - Standard Error (for messages, also defaults to the terminal <- what does this even mean..?)
+
+
+			STDIN (0) --> [ SOME PROGRAM ] --> STDOUT (1)
+					      +----------> STDERR (2)
+
+The Standard error is an alternative mechanism for writing output form a program. It's a different link to the same output terminal as STDOUT, but
+is unbuffered so error messages can be written immediately instead of one line at a time. All three of the streams have their own ID values, also
+referred to as file descriptors in some cases.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+The concept of piping and redirecting is basically about how we connect those streams to programs and files. 
+
+To redirect to a file we use the "greater than symbol" (>). What you're basically doing is aying that instead having the output go to STDOUT ->
+be the contents of this file. I don't know whether we can specify a format yet, but I wouldn't be surprised if we could somehow, however
+rn every element is followed by a "\n".
+Another thing that's kinda nice to know, is that our destination doesn't have to exist yet for us to be able to store something in it. However
+if it does already exist, we need to append to it instead using (>>), because otherwise the current contents will be overwritten. 
+
+
+In the case of wanting a visual confirmation as to what is being appended/ redirected elsewhere we can choose to redirect some_output to multiple
+streams. We achieve this by using "&".
+
+						>&2 || 2>&1 || ls -l 2>&1
+
+This last program list all the elements in our directory then the output is redirected to stream 1. So stream 2 is literally redirected into
+stream 1. Technically [ls -1 3>&2 2>&1 1>&3] should also work, and in bash it does, it swaps STDOUT and STDERR. In zsh however both STDOUT and
+STDERR end up on STDOUT.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+We can also redirect from a file, so we're using the contents of said file as input for our command or program. To redirect from a file we use
+some_command < our_textfile. We can now also redirect that output (so the output of "some_command < ourtextfile") to another file. This looks like:
+"some_command < our_textfile > some_outputfile"
+
+To redirect STDERR messages we use 2>. here the 2 signals which stream we are accessing and the "grater than" symbol signals/ points where we're
+pointing to.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+									PIPING
+now that we've covered redirecting data from one stream to another, we can also chose to feed the data into another program. This is achieved by
+using Pipes (|). This operator feeds the output of the program to it's left as input to the program on it's right. This can be done however many times
+we need it to. 
