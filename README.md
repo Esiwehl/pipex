@@ -47,6 +47,30 @@ referred to as file descriptors in some cases.
 So besides redirecting and piping from one stream to another, we can also do so from a file. What this means is that we're using the contents of said file as input for our command or program. To redirect from a file we use `some_command < our_textfile`. We can now also redirect that output (so the output of "some_command < ourtextfile") to another file. This looks like:
 > `some_command < our_textfile > some_outputfile`
 
-To redirect STDERR messages we use 2>. here the 2 signals which stream we are accessing and the "greater than" symbol signals/ points where we're pointing to.
-
+To redirect STDERR messages we use 2>. here the 2 signals which stream we are accessing and the "greater than" symbol signals/ points where we're pointing to. So `non_existent_file grep -c 2>&outfile` effectively pipes the output on STDERR to outfile. Similarly 
 ---
+
+##	Some info I still want to look at
+
+### Greta thunberg 
+https://www.gnu.org/software/libc/manual/html_node/Standard-Environment.html
+
+https://www.gnu.org/software/libc/manual/html_node/Program-Arguments.html
+
+### On redirects and piping
+https://www.liquidweb.com/kb/how-to-use-linux-pipe-for-redirection/#:~:text=A%20pipe%20is%20a%20form,placed%20between%20any%20two%20commands.
+
+https://ryanstutorials.net/linuxtutorial/piping.php
+
+https://www.geeksforgeeks.org/piping-in-unix-or-linux/
+
+https://linuxhandbook.com/pipe-redirection/
+
+###	README INFO
+
+https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+
+https://www.makeareadme.com/
+
+https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
+

@@ -1,0 +1,9 @@
+zsh: command not found: infile
+zsh: command not found: infile
+       1
+total 32
+-rw-r--r--  1 ewehl  student  3506 Dec 22 18:08 README.md
+-rw-r--r--  1 ewehl  student    71 Dec 22 18:09 outfile
+-rw-r--r--  1 ewehl  student  3380 Dec 21 16:12 redirectTest.txt
+-rw-r--r--  1 ewehl  student    15 Dec 22 15:46 testfile1
+       5      38     246
