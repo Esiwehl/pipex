@@ -6,12 +6,15 @@ The concept of piping and redirecting basically covers how we connect streams to
 
 We can redirect in various ways; 
 > The output of a command to a file [`ls -l > some_file`] 
-> The input from a file (or STDIN) to some command [`grep -c some_word < some_file`] == [`cat some_file | grep -c some_word`]
+> The contents of a file (or STDIN) to some command [`grep -c some_word < some_file`] == [`cat some_file | grep -c some_word`]
+	In this specific example grep is one of the commands that doesn't usually accept a file as an option, however using the less than symbol ("<") allows us to redirect it's contents.
 
-In this last example we showed the similarities betwe
+The last example shows how different configurations of the redirection operators available can achieve the same thing.
 
 #### Diff? Is there one..?
 > A *pipe* passes the standard output as the standard input to another command. Think of the shittrain thingy in southpark - that ass to moutoh type of thing..
+
+	![alt text](https://live.staticflickr.com/6234/6290300905_469889172b_b.jpg)
 
 > A *redirect* sends a stream of output to a file. Sometimes you'll see a stream be referred to as a channel, sucks but it happens.
 
