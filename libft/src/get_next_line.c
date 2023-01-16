@@ -13,6 +13,20 @@
 #include "headers/get_next_line.h"
 #include "stdio.h"
 
+size_t	ft_find_nl(char *buff)
+{
+	size_t	idx;
+
+	idx = 0;
+	while (buff[idx])
+	{
+		if (buff[idx] == '\n')
+			return (idx + 1);
+		idx++;
+	}
+	return (0);
+}
+
 ssize_t	schmove(char *buff, size_t start)
 {
 	size_t	idx;
@@ -94,7 +108,7 @@ char	*get_input(int fd, char *line)
 
 char	*get_next_line(int fd)
 {
-	static char	*holder[OPEN_MAX];
+	static char	*holder[1024];
 	char		*ret_line;
 	size_t		pos_nl;
 
@@ -117,8 +131,3 @@ char	*get_next_line(int fd)
 		return (ret_line);
 	return (free(holder[fd]), free(ret_line), holder[fd] = NULL, NULL);
 }
-
-// FAILS TO CHECK::
-//		schmove mallocing tmp fails
-//		if schmove returns (0)
-//		check strldup if malloc fails.

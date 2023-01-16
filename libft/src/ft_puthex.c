@@ -25,27 +25,19 @@ size_t	ft_getlen(size_t num, size_t base)
 	return (len);
 }
 
-char	*base_def(char flag)
-{
-	char	*base;
-
-	base = NULL;
-	if (flag == 'X')
-		base = "0123456789ABCDEF";
-	else if (flag == 'x')
-		base = "0123456789abcdef";
-	return (base);
-}
-
 size_t	ft_puthex(unsigned long n, char format)
 {
 	size_t	count;
 	char	*base;
 
 	count = ft_getlen(n, 16);
-	base = base_def(format);
+	base = NULL;
 	if (!n)
 		return (ft_putstr_len("0"));
+	if (flag == 'X')
+		base = "0123456789ABCDEF";
+	else if (flag == 'x')
+		base = "0123456789abcdef";
 	if (n > 15)
 	{
 		ft_puthex((n / 16), format);

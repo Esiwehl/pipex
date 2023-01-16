@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "headers/libft.h"
 #include "headers/ft_printf.h"
 
 static int	get_action(const char *str, va_list ap)
@@ -52,22 +53,4 @@ int	ft_printf(const char *format, ...)
 	}
 	va_end(args);
 	return (count);
-}
-
-#include <limits.h>
-int	main(void)
-{
-	// float x = 7.12134352423;
-	// char *str = NULL;
-	// int z =  -2147483648;
-
-	// unsigned int a = -9;
-
-	int x = ft_printf("%%, %X, %x %Tfhlfghs\n", 62450, 62450);
-	int y = printf("%%, %X, %x %Tfhlfghs\n", 62450, 62450);
-
-	ft_printf("%d\t", x);
-	ft_printf("%d\n", y);
-
-	return (0);
 }
