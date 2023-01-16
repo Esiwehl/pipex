@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/12 11:16:06 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/12/27 17:45:21 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:33:00 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/libft.h"
+#include "libft.h"
 
 void	ft_putnbr_fd(int n, int fd)
 {

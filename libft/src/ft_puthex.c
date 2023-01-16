@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/ft_printf.h"
+#include "ft_printf.h"
 
 size_t	ft_getlen(size_t num, size_t base)
 {
@@ -34,9 +34,9 @@ size_t	ft_puthex(unsigned long n, char format)
 	base = NULL;
 	if (!n)
 		return (ft_putstr_len("0"));
-	if (flag == 'X')
+	if (format == 'X')
 		base = "0123456789ABCDEF";
-	else if (flag == 'x')
+	else if (format == 'x')
 		base = "0123456789abcdef";
 	if (n > 15)
 	{

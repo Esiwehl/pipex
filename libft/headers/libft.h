@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/11 11:47:48 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/10/25 19:51:33 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 14:51:04 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include "get_next_line.h"
-# include "ft_printf.hs"
+# include "ft_printf.h"
 
 typedef struct s_list
 {

@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/05 14:56:07 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/12/27 17:43:27 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:29:55 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/libft.h"
+#include "libft.h"
 
 static int	ft_isspace(int c)
 {

@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/29 21:03:06 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/11/22 14:08:44 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 14:28:29 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <limits.h>
+
+# include "libft.h"
 
 char	*get_next_line(int fd);
 

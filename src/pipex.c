@@ -1,27 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ft_putstr_fd.c                                     :+:    :+:            */
+/*   pipex.c                                            :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/10/12 11:04:38 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/16 13:33:00 by ewehl         ########   odam.nl         */
+/*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
+/*   Updated: 2023/01/16 14:45:36 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-void	ft_putstr_fd(char *s, int fd)
+
+int	ft_error(char *str)
 {
-	size_t	idx;
-
-	idx = 0;
-	while (s[idx])
-		write(fd, &s[idx++], 1);
+	ft_printf(str);
+	// At some pointn use perror perhaps?
+	return (-1);
 }
 
-// int main()
-// {
-//     ft_putstr_fd("Kaas", 2);
-// }
+
+int	main(int argc, char *argv[], char *envp[])
+{
+	if (argc != 5)
+		return (ft_error(ERR_INPUT));
+	else
+	{
+		ft_printf("Snelle check\n");
+		ft_printf("%s \n", envp[0]);
+		ft_printf("argv[0] = %s\n", argv[0]);
+	}
+	return (0);
+}

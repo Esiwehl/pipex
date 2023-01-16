@@ -6,12 +6,12 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/24 20:08:20 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/12/27 17:42:43 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:34:10 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/libft.h"
-#include "headers/ft_printf.h"
+#include "libft.h"
+#include "ft_printf.h"
 
 static int	get_action(const char *str, va_list ap)
 {

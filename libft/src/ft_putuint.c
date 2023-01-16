@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/28 14:23:32 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/10/30 20:01:08 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:34:10 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/ft_printf.h"
+#include "ft_printf.h"
 
 char	*ft_uitoa(unsigned int n)
 {

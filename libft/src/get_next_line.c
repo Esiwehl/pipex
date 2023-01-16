@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/11/20 17:58:53 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/12/27 17:49:09 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:33:40 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/get_next_line.h"
+#include "get_next_line.h"
 #include "stdio.h"
 
 size_t	ft_find_nl(char *buff)

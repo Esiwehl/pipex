@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/13 11:47:46 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/12/27 17:44:11 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:33:00 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/libft.h"
+#include "libft.h"
 
 static int	get_len(int *nb)
 {

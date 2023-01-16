@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/17 17:10:57 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/12/27 17:44:37 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:33:00 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/libft.h"
+#include "libft.h"
 
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {

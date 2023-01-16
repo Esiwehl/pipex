@@ -18,7 +18,7 @@
 # include <unistd.h>
 # include <stdarg.h>
 
-# include "headers/libft.h"
+# include "libft.h"
 
 int		ft_printf(const char *format, ...);
 size_t	ft_getlen(size_t num, size_t base);

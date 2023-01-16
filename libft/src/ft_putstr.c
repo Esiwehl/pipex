@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/28 13:54:49 by ewehl         #+#    #+#                 */
-/*   Updated: 2022/12/27 17:42:58 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/16 13:34:10 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/ft_printf.h"
+#include "ft_printf.h"
 
 size_t	ft_putchar_len(int c)
 {

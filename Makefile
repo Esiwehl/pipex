@@ -6,25 +6,20 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/01/16 14:14:34 by ewehl         ########   odam.nl          #
+#    Updated: 2023/01/16 16:20:40 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-NAME			= libft.a
+NAME	= pipex
 
-HEADERF			= headers/libft.h headers/ft_printf.h headers/get_next_line.h
+HEADERF	= headers/pipex.h
 
+LIBFT			= libft
 SRC_DIR			= src/
 OBJ_DIR			= obj/
 
-SRCS			=	ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c ft_isascii.c \
-					ft_isdigit.c ft_isprint.c ft_itoa.c ft_memchr.c ft_memcmp.c ft_memcpy.c \
-					ft_memmove.c ft_memset.c ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
-					ft_putstr_fd.c ft_split.c ft_strchr.c ft_strcpy.c ft_strdup.c ft_striteri.c \
-					ft_strjoin.c ft_strlcat.c ft_strlcpy.c ft_strldup.c ft_strlen.c ft_strmapi.c \
-					ft_strncmp.c ft_strnstr.c ft_strrchr.c ft_strtrim.c ft_substr.c ft_tolower.c \
-					ft_toupper.c get_next_line.c ft_printf.c ft_putstr.c ft_putuint.c ft_puthex.c
-#SRC				= $(addprefix $(SRC_DIR), $(SRCS))
+SRCS			= pipex.c \
+
 OBJS			= $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
 
 CC				= cc
@@ -37,23 +32,27 @@ AR				= ar rcs
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	@echo "$(GREY)	Working on libft..$(WHITE)"
-	@$(AR) $@ $^
-	@echo "$(GREEN)	COMPILED LIBFT :D$(WHITE)"
+	@echo "$(GREY)	Working on it..$(WHITE)"
+	@make -C $(LIBFT) -s
+	@$(CC) $(IFLAGS) $(CFLAGS) $< -o $@
+	@echo "$(GREEN)	Pipes are up.$(WHITE)"
 
 $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
 	@mkdir -p $(@D)
 	@$(CC) $(IFLAGS) $(CFLAGS) -c $< -o $@
 
 clean :
-	@echo "$(BLUE)	I just-a cleaning lady... ¯\_(ツ)_/¯$(WHITE)"
+	@echo "$(BLUE)	I just-a cleaning lady... ¯\_(ツ)_/¯ $(WHITE)"
+	@make clean -C $(LIBFT) --no-print-directory
 	@$(RM) $(OBJ_DIR)
-	@echo "$(PURPLE)	I cleaned your mess up, again. 눈_눈$(WHITE)"
+	@echo "$(PURPLE)	I cleaned your mess, again. Fix your shit ♡눈_눈♡$(WHITE)"
 
 fclean : clean
+	@make fclean -C $(LIBFT)
 	@$(RM) $(NAME)
 
 re : fclean all
+	@make fclean -C $(LIBFT)
 	@echo "$(YELLOW)	Really... Pls Stop making me work this hard. ಠ_ರೃ $(WHITE)"
 
 norm:
@@ -69,7 +68,3 @@ BLUE	=	\033[0;34m
 PURPLE	=	\033[0;35m
 CYAN	=	\033[0;36m
 WHITE	=	\033[0;37m
-
-#INC_DIR =   $(shell find headers -type d)
-#IFLAGS = $(foreach dir, $(INC_DIR), -I$(dir))
-#@$(CC) $(CFLAGS) $(IFLAGS) -o $@ -c $<
