@@ -19,27 +19,34 @@ int	ft_error(char *str)
 	return (-1);
 }
 
-/*char *get_path(char **string)
+char *get_path(char **env)
 {
 	char *path;
+	size_t idx;
 
-	path = ft_strchr("PATH=", 5);
+	idx = 0;
+	while (env[idx] && !ft_strcmp(env[idx], "PATH"))
+		idx++;
+	if (env[idx] == NULL)
+	{
+		ft_error(ERR_PATH);
+		return (NULL); //Maybe some exit instead..?
+	}
+	path = ft_strdup(env[idx]);
 	return (path);
-}*/
+}
 
 int	main(int argc, char *argv[], char *envp[])
 {	
+	char *path;
+
 	if (argc != 5)
 		return (ft_error(ERR_INPUT));
 	else
 	{
-		for (int idx = 0; envp[idx]; idx++)
-			ft_printf("%s \n", envp[idx]);
 		ft_printf("argv[0] = %s\n", argv[0]);
-		int fd = open("src/pipex.c", O_RDONLY);
-		for (int jdx = 0; jdx < 46; jdx++)
-			ft_printf("%s", get_next_line(fd));
-		close(fd);
+		path = get_path(envp);
+		ft_printf("path: %s", path);
 	}
 	return (0);
 }

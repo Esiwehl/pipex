@@ -42,6 +42,7 @@
 # define ERR_INFILE "Infile"
 # define ERR_OUTFILE "Outfile"
 # define ERR_INPUT "Invalid number of arguments.\n"
+# define ERR_PATH "Path not found.\n"
 # define ERR_PIPE "Pipe"
 # define ERR_CMD "Command not found\n"
 
