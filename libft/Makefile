@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/01/16 14:14:34 by ewehl         ########   odam.nl          #
+#    Updated: 2023/01/17 15:44:12 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,7 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
 clean :
 	@echo "$(BLUE)	I just-a cleaning lady... ¯\_(ツ)_/¯$(WHITE)"
 	@$(RM) $(OBJ_DIR)
-	@echo "$(PURPLE)	I cleaned your mess up, again. 눈_눈$(WHITE)"
+	@echo "$(PURPLE)	I cleaned your mess, again. 눈_눈$(WHITE)"
 
 fclean : clean
 	@$(RM) $(NAME)
