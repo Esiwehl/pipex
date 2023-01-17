@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/01/17 16:04:59 by ewehl         ########   odam.nl          #
+#    Updated: 2023/01/17 17:24:03 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,8 +32,8 @@ AR				= ar rcs
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	@echo "$(GREY)	Working on it..$(WHITE)"
-	@@make -sC $(LIBFT)
+	@echo "$(GREY)	Working on these gdamn pipes..$(WHITE)"
+	@@make -s -C $(LIBFT)
 	@$(CC) $(IFLAGS) $(CFLAGS) $(LIBFT)/libft.a $(OBJ_DIR)/pipex.o -o $@
 	@echo "$(GREEN)	Pipes are up.$(WHITE)"
 
@@ -42,18 +42,17 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
 	@$(CC) $(IFLAGS) $(CFLAGS) -c $< -o $@
 
 clean :
-	@echo "$(BLUE)	I just-a cleaning lady... ¯\_(ツ)_/¯ $(WHITE)"
-	@make clean -sC $(LIBFT)
+	@echo "$(GREY)	I just-a cleaning lady... ¯\_(ツ)_/¯ $(WHITE)"
+	@make clean -s -C $(LIBFT)
 	@$(RM) $(OBJ_DIR)
 	@echo "$(PURPLE)	I cleaned your mess, again. Fix your shit ♡눈_눈♡$(WHITE)"
 
 fclean : clean
-	@make fclean -sC $(LIBFT)
+	@$(RM) $(LIBFT)libft.a
 	@$(RM) $(NAME)
 
 re : fclean all
-	@make fclean -C $(LIBFT)
-	@echo "$(YELLOW)	Really... Pls Stop making me work this hard. ಠ_ರೃ $(WHITE)"
+	@echo "$(YELLOW)	Pls Stop making me work this hard. ಠ_ರೃ $(WHITE)"
 
 norm:
 	@norminette $(SRCS) $(HEADERF)

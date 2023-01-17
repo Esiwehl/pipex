@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/01/17 15:44:12 by ewehl         ########   odam.nl          #
+#    Updated: 2023/01/17 17:26:05 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,18 +37,17 @@ AR				= ar rcs
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	@echo "$(GREY)	Working on libft..$(WHITE)"
+	@echo "$(CYAN)	Working on libft..$(WHITE)"
 	@$(AR) $@ $^
-	@echo "$(GREEN)	COMPILED LIBFT :D$(WHITE)"
+	@echo "$(PURPLE)	Foundation laid. :D$(WHITE)"
 
 $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
 	@mkdir -p $(@D)
 	@$(CC) $(IFLAGS) $(CFLAGS) -c $< -o $@
 
 clean :
-	@echo "$(BLUE)	I just-a cleaning lady... ¯\_(ツ)_/¯$(WHITE)"
+	@echo "$(CYAN)	There goes libft, schwoooopp$(WHITE)"
 	@$(RM) $(OBJ_DIR)
-	@echo "$(PURPLE)	I cleaned your mess, again. 눈_눈$(WHITE)"
 
 fclean : clean
 	@$(RM) $(NAME)
