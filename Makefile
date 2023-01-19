@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/01/17 17:24:03 by ewehl         ########   odam.nl          #
+#    Updated: 2023/01/19 19:01:30 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,8 @@ IFLAGS			= -I headers/
 RM				= rm -Rf
 
 AR				= ar rcs
+
+GITMSG			?= default_value_if_not_set_in_environment
 
 all : $(NAME)
 
@@ -57,7 +59,12 @@ re : fclean all
 norm:
 	@norminette $(SRCS) $(HEADERF)
 
-.PHONY:		all clean fclean re norm
+sendit:
+	@git add -u
+	@git commit -m $(GITMSG)
+	@git push
+
+.PHONY:		all clean fclean re norm sendit
 
 GREY	=	\033[0;30m
 RED		=	\033[0;31m
