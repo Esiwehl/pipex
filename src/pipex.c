@@ -36,6 +36,8 @@ char *get_path(char **env)
 	return (path);
 }
 
+
+
 int	main(int argc, char *argv[], char *envp[])
 {	
 	char *path;
