@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/19 18:19:06 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/19 18:48:37 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ char *get_path(char **env)
 	printf("env[%zu]: %s\n", idx, env[idx]);
 	return (path);
 }
+
+
 
 int	main(int argc, char *argv[], char *envp[])
 {	
