@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/17 17:15:30 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/19 18:19:06 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char *get_path(char **env)
 	size_t idx;
 
 	idx = 0;
-	while (env[idx] && !ft_strcmp(env[idx], "PATH"))
+	while (env[idx] && ft_strncmp(env[idx], "PATH", 4))
 		idx++;
 	if (env[idx] == NULL)
 	{
@@ -33,10 +33,9 @@ char *get_path(char **env)
 		return (NULL); //Maybe some exit instead..?
 	}
 	path = ft_strdup(env[idx]);
+	printf("env[%zu]: %s\n", idx, env[idx]);
 	return (path);
 }
-
-
 
 int	main(int argc, char *argv[], char *envp[])
 {	
@@ -49,6 +48,7 @@ int	main(int argc, char *argv[], char *envp[])
 		ft_printf("argv[0] = %s\n", argv[0]);
 		path = get_path(envp);
 		ft_printf("path: %s", path);
+		free(path);
 	}
 	return (0);
 }
