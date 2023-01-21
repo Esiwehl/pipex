@@ -7,14 +7,12 @@ typedef struct s_pipex
 	char	**cmds;
 	char	***args;
 
-	int		**pipe;
+	int		p[2];
+	int		p2[2]
 	pid_t	*child;
 
 	int		cmd_count;
-	int		pipe_count;
-	
-	int		fd_file1;
-	int		fd_file2;   
+	int		pipe_count; 
 
 }t_pipex;
 

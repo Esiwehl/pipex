@@ -2,7 +2,7 @@
 ## Because sometimes your data needs to be redirected.
 
 ### What is it actually about tho..?
-The concept of piping and redirecting basically covers how we connect streams to programs and files.
+The concept of piping and redirecting basically covers how we connect streams to programs and files. This can ahppen because of processes, these are programs that are being executed. To me a program is a set of instructions under one name. 
 
 We can redirect in various ways; 
 > The output of a command to a file [`ls -l > some_file`] 
@@ -53,7 +53,83 @@ So besides redirecting and piping from one stream to another, we can also do so 
 To redirect STDERR messages we use 2>. here the 2 signals which stream we are accessing and the "greater than" symbol signals/ points where we're pointing to. So `non_existent_file grep -c 2>&outfile` effectively pipes the output on STDERR to outfile. Similarly 
 ---
 
+### Approved Functionez.
+open(const char *path, int oflag, ...) - open or create a file for reading or writing, depending on which flags you pass into it when calling the function.
+Returns: >=3 on succes (this is your fd), -1 and errno is set on error. 
+
+close(int fd) - *deletes* a descriptor from the per-process object reference table (ORT). If this is the last reference within said ORT, the obect wil be deactivated. 
+Returns: 0 upon completion, -1 and errno is set on error. 
+
+read(int fildes, void *buf, size_t nbyte) - attempts to read nbytes if data from the object referenced by fd into buffer pointed to by buff. 
+Returns: On succes num of bytes actually read, -1 and errno is set on error.
+
+write(int fildes, const void *buf, size_t nbyte) - attempts to write nbytes if data from the object referenced by fd into buffer pointed to by buff.
+Returns: On succes num of bytes actually written, -1 and errno is set on error.
+
+perror(const char *s) - finds error message that's paired to/wtih current value of the global variable errno() and writes it iwth a \n to STDERR. This func also takes an argument if non-NULL this string is prepended to the message string and separated from it by a colon and space (\`\`: ''); otherwise, only the error message string is printed. If the error number is not recognized, these functions return an error message string containing \`\`Unknown error: '' followed by the error number in decimal.
+
+strerror(int errnum) - accepts an error number argument errnum and returns a pointer to the corresponding message string.
+
+access(const char *path, int mdoe) - checks whether we can access the file named by *path, for the permissions specified by mode argument. Mode can either be bitwise-inclusive OR (R_OK for read permission, W_OK for write permission, and X_OK for execute/search permission), or the existence test (F_OK).
+Returns:  -1 and errno is set on error.
+
+dup(int fd) - duplicates an existing object descriptor and returns its value to the calling process (fildes2 = dup(fildes)).
+CoolioThing:: you can call getdtablesize(), to for one get the size of your ORT, but also to find out what number your last fd is. TRY THIS.
+
+dup2(int fd, int fd2) - this is basically a redirect, fd two now instead also points to fd2. 
+
+execve(const char *path, char *const argv[], char *const envp[]) -  Transforms the calling process into a new process. The new process is constructed from an ordinary file, whose name is pointed to by path, called the new process file. 
+
+	The argument argv is a pointer to a null-terminated array of character pointers to null-terminated character strings.
+	The argument envp is also a pointer to a null-terminated array of character pointers to null-terminated strings.
+
+ File descriptors open in the calling process image remain open in the new process image, except for those for which the close-on-exec flag is set (see close(2) and fcntl(2)).
+
+ Returns: As the execve() function overlays the current process image  with a new process image, the successful call has no process to return to.  If execve() does return to the calling process, an error has occurred; the return value will be -1 and the global variable errno is set to indicate the error.
+
+exit(int status) - 'normal' program execution. Before termination, exit() performs the following functions in the order listed:
+
+           1.   Call the functions registered with the atexit(3) function, in the reverse order of their registration.
+
+           2.   Flush all open output streams.
+
+           3.   Close all open streams.
+
+           4.   Unlink all files created with the tmpfile(3) function.
+
+Return: Well.. they don't... kinda makes sense, no?
+
+pid_t fork(void) - creates a new process. The new process is an exact copy of the calling process, 
+
+        o   The child process has a unique process ID.
+
+        o   The child process has a different parent process ID (i.e., the process ID of the parent process).
+
+        o   The child process has its own copy of the parent's descriptors.  These descriptors reference the same underlying
+               objects, so that, for instance, file pointers in file objects are shared between the child and the parent, so that an lseek(2) on a descriptor in the child process can affect a subsequent read or write by the parent.  This descriptor copying is also used by the shell to establish standard input and output for newly created processes as well as to set up pipes.
+Returns: 0 to the new process (the kid..) and the newID to parent. Otherwise -1 to parent and errno is set.
+
+pipe(void) - creates a descriptor pair for interprocess communicatin. It creates a pipe (something like a one way street for data). In doing so it allocates a pair of file descriptors for its entrance (this is the read end) and exit (this is the write end). Data written to fildes[1] appears on (i.e., can be read from) fildes[0]. The pipe itself persists until all of its associated descriptors are closed.
+Returns: 0 if succesful, -1 and errno are set on error.
+
+unlink(const char *path) - removes the link named by path from its directory and decrements the link count of the file which was referenced by the link.  If that decrement reduces the link count of the file to zero, and no process has the file open, then all resources associated with the file are reclaimed.  If one or more process have the file open when the last link is removed, the link is removed, but the removal of the file is delayed until all references to it have been closed.
+
+wait(int *stat_loc) - 'pauses' the calling process until stat_loc info ir available for a starved kid. 
+
+waitpid(pid_t pid, int *stat_loc, int options) - rovides a more general interface for programs that need to wait for certain child processes, that need resource utilization statistics accumulated by child processes, or that require options.
+
+	The *pid* parameter specifies the set of child processes for which to wait.  If pid is -1, the call waits for any child process. If pid is 0, the call waits for any child process in the process group of the caller.  If pid is greater than zero, the call waits for the process with process id pid.  If pid is less than -1, the call waits for any process whose process group id equals the absolute value of pid.
+
+	The *options* parameter contains the bitwise OR of any of the following options. The WNOHANG option is used to indicate that the call should not block if there are no processes that wish to report status. If the WUNTRACED option is set, children of the current process that are stopped due to a SIGTTIN, SIGTTOU, SIGTSTP, or SIGSTOP signal also have their status reported.
+
 ##	Some info I still want to look at
+
+### QUESTIONEZ
+How many descriptors can there be per process? The man page of close() states that
+> When a process exits, all associated file descriptors are freed, but since there is a limit on active descriptors per
+processes, the close() function call is useful when a large quantity of file descriptors are being handled.
+
+
 
 ### Greta thunberg 
 https://www.gnu.org/software/libc/manual/html_node/Standard-Environment.html
