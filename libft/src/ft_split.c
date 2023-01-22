@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/11 17:31:38 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/16 13:33:00 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/22 20:33:15 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	is_delim(char s, char c)
 	return (s == c);
 }
 
-static int	get_wordc(char const *s, char c)
+static int	get_idxcount(char const *s, char c)
 {
 	int	count;
 	int	idx;
@@ -92,7 +92,7 @@ char	**ft_split(char const *s, char c)
 	char	**dest;
 	int		words;
 
-	words = get_wordc(s, c);
+	words = get_idxcount(s, c);
 	dest = (char **)malloc(sizeof(char *) * (words + 1));
 	if (!dest)
 		return (NULL);
