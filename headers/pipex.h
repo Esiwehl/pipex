@@ -46,4 +46,23 @@
 # define ERR_PIPE "Pipe"
 # define ERR_CMD "Command not found\n"
 
+typedef struct s_pipex
+{
+	pid_t	pid;
+	int		pipe[2];
+	int		infile;
+	int		outfile;
+	char	*paths;
+	char	**cmd_p;
+	char	**cmds_args;
+	char	*cmd;
+}			t_pipex;
+
+void		ft_free(t_pipex *pipex, char c);
+char		*find_path(char **envp);
+void		close_pipes(t_pipex *pipex);
+char		*get_cmd(char **paths, char *cmd);
+void		child(t_pipex pipex, char **av, char **envp);
+void		parent(t_pipex pipex, char **av, char **envp);
+
 #endif

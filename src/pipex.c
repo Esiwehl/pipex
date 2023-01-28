@@ -14,9 +14,47 @@
 
 int	ft_error(char *str)
 {
-	ft_printf(str);
-	// At some point use perror perhaps?
-	return (-1);
+	char	*msg;
+
+	msg = strerror(errno);
+	ft_putstr_fd(msg, 2);
+	ft_putstr_fd("\n", 2);
+	exit(errno);
+}
+
+void	close_pipes(t_pipex *pipex)
+{
+	close(pipex->pipe[0]);
+	close(pipex->pipe[1]);
+}
+
+void	free_pipe(t_pipex *pipex, char flag)
+{
+	size_t	idx;
+
+	idx = 0;
+	if(flag == 'p')
+		close_pipes(pipes);
+	while(pipex->cmd_p[idx])
+	{
+		free(pipex->cmd_p[idx]);
+		idx++
+	}
+	free(pipex->cmd_p);
+}
+
+int	check_cmd(char *cmd)
+{
+	if (access(cmd, F_OK) < 0)
+	{
+		ft_error();
+	}
+	if (access(cmd, X_OK) < 0)
+	{
+		ft_putstr_fd("Permissions denied, weeb", 2);
+		exit(126);
+	}
+	return (1);
 }
 
 char *get_path(char **env)
@@ -29,73 +67,114 @@ char *get_path(char **env)
 		idx++;
 	if (env[idx] == NULL)
 	{
-		ft_error(ERR_PATH);
-		return (NULL); //Maybe some exit instead..?
+		path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:.";
+		return (path);
 	}
-	path = ft_strdup(env[idx]);
-	printf("env[%zu]: %s\n", idx, env[idx]);
+	path = ft_strdup(ft_strtrim(env[idx], "PATH="));
 	return (path);
 }
 
-char **path_parser(char *full_path)
+char *get_cmd(char **paths, char *cmd)
 {
-	char **paths;
-	
-	paths = ft_split(full_path, ':');
-	if (!paths)
-		return (NULL);
-	return (paths);
-}
-
-char *find_path(char **paths)
-{
-	char *the_way;
-	size_t idx;
+	char	*the_way;
+	char	*tmp;
+	size_t	idx;
 
 	idx = 0;
 	while (paths[idx])
 	{
-		the_way = ft_strappend(paths[idx], '/' + cmd[0])
-		if (access(paths[idx], X_OK))
+		tmp = ft_strappend(paths[idx], '/'); //at some point use va list for strappend?
+		the_way = ft_strappend(paths[idx], cmd[0]);
+		free(tmp);
+		if (check_cmd(the_way) == 1)
+			return (the_way);
+		free(the_way);
 		idx++;
 	}
+	return (NULL);
 }
 
-int main(int argc, char *argv[], char *envp[])
+int	ft_fork(t_pipex pipex, char **av, char **envp)
 {
-	static int x = 1;
-	int fd = open("tester.c", O_RDONLY);
-	for(int i = 0; i < 5; i++)
-	{
-		printf("Does this also get printed");
-		int f = fork();
-		printf("fork ret = %d\n", f);
-		if (f == 0)
-		{
-			printf("[kid] pid %d from [parent] pid %d\n", getpid(), getppid());
-			if (execve(argv[0], argv[1], get_path(envp)));
-			exit(0);
-		}
-		else
-			printf("[%d]They don't show this... kidpid [%d]\n", x++, getpid());
-	}
-	close(fd);
-	printf("x = %d\n", x);
-	return (0);
+	pipex.pid = fork();
+	if (pipex.pid == 0)
+		child(pipex, av, envp);
+	else
+		parent(pipex, av, envp);
+	return (pipex.pid);
 }
 
-/*int	main(int argc, char *argv[], char *envp[])
+void	child(t_pipex pipex, char **av, char **env)
+{
+	pipex.infile = open(av[1], O_RDONLY);
+	if (access(av[1], F_OK) < 0)
+		ft_error();
+	if (access(av[1], R_OK) < 0)
+		ft_error();
+	dup2(pipex.pipe[1], 1);
+	close(pipex.pipe[0]);
+	dup2(pipex.infile, 0);
+	pipex.cmds_args = ft_split(av[2], ' ');
+	pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmds_args[0]);
+	if (!pipex.cmd)
+	{
+		ft_free(&pipex, 'c');
+		ft_error():
+		//ft_putstr_fd("Command not found\n", 2);
+		//exit(127);
+	}
+	execve(pipex.cmd, pipex.cmds_args, env);
+	exit(1);
+}
+
+void	parent(t_pipex pipex, char **av, char **env)
+{
+	pipex.outfile = open(av[4], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	if (access(av[4], W_OK) < 0)
+	{
+		ft_dprintf(2, "pipex: %s: permission denied\n", av[4]);
+		exit(1);
+	}
+	dup2(pipex.pipe[0], 0);
+	close(pipex.pipe[1]);
+	dup2(pipex.outfile, 1);
+	pipex.cmds_args = ft_split(av[3], ' ');
+	if (pipex.cmds_args[0] == NULL)
+		exit(1);
+	pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmds_args[0]);
+	if (!pipex.cmd)
+	{
+		ft_free(&pipex, 'p');
+		ft_dprintf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
+		exit(127);
+	}
+	execve(pipex.cmd, pipex.cmds_args, env);
+	exit(1);
+}
+
+int	main(int argc, char *argv[], char *envp[])
 {	
-	char *path;
+	t_pipex		*pipex;
+	char		*path;
+	int			stat;
 
 	if (argc != 5)
-		return (ft_error(ERR_INPUT));
-	else
 	{
-		ft_printf("argv[0] = %s\n", argv[0]);
-		path = get_path(envp);
-		ft_printf("path: %s", path);
-		free(path);
+		ft_putstr_fd("Wrong number of inputs", 2)
+		return (1);
 	}
+	if (pipe(pipex.pipe) < 0)
+	{
+		ft_error();
+		//ft_putstr_fd("Pipe failed", 2);
+		//return (1);
+	}
+	pipex.paths = get_path(envp);
+	pipex.cmd_p = ft_split(pipex.paths, ':');
+	if (ft_fork(pipex, argv, envp) < 0)
+		ft_error();
+	close_pipes(&pipex);
+	waitpid(pipex.pid, &stat, 0);
+	ft_free(&pipex, 'p');
 	return (0);
-}*/
+}
