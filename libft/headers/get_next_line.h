@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/29 21:03:06 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/16 14:28:29 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/29 16:21:24 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@
 char	*get_next_line(int fd);
 
 char	*get_input(int fd, char *line);
-char	*ft_strappend(char *dst, char *src);
 char	*ft_strldup(char *s1, size_t len);
 void	*ft_bzero(void *s, size_t n);
+char	*ft_strappend(char *dst, char *src);
 ssize_t	schmove(char *buff, size_t start);
 size_t	ft_strlen(const char *str);
 size_t	ft_strcpy(char *dest, char *src);
