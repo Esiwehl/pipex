@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-int	ft_error(char *str)
+int	ft_error(void)
 {
 	char	*msg;
 
@@ -34,11 +34,11 @@ void	free_pipe(t_pipex *pipex, char flag)
 
 	idx = 0;
 	if(flag == 'p')
-		close_pipes(pipes);
+		close_pipes(pipex);
 	while(pipex->cmd_p[idx])
 	{
 		free(pipex->cmd_p[idx]);
-		idx++
+		idx++;
 	}
 	free(pipex->cmd_p);
 }
@@ -83,8 +83,8 @@ char *get_cmd(char **paths, char *cmd)
 	idx = 0;
 	while (paths[idx])
 	{
-		tmp = ft_strappend(paths[idx], '/'); //at some point use va list for strappend?
-		the_way = ft_strappend(paths[idx], cmd[0]);
+		tmp = ft_strappend(paths[idx], "/"); //at some point use va list for strappend?
+		the_way = ft_strappend(paths[idx], cmd);
 		free(tmp);
 		if (check_cmd(the_way) == 1)
 			return (the_way);
@@ -94,32 +94,32 @@ char *get_cmd(char **paths, char *cmd)
 	return (NULL);
 }
 
-int	ft_fork(t_pipex pipex, char **av, char **envp)
+int	ft_fork(t_pipex pipex, char **argv, char **envp)
 {
 	pipex.pid = fork();
 	if (pipex.pid == 0)
-		child(pipex, av, envp);
+		child(pipex, argv, envp);
 	else
-		parent(pipex, av, envp);
+		parent(pipex, argv, envp);
 	return (pipex.pid);
 }
 
-void	child(t_pipex pipex, char **av, char **env)
+void	child(t_pipex pipex, char **argv, char **env)
 {
-	pipex.infile = open(av[1], O_RDONLY);
-	if (access(av[1], F_OK) < 0)
+	pipex.infile = open(argv[1], O_RDONLY);
+	if (access(argv[1], F_OK) < 0)
 		ft_error();
-	if (access(av[1], R_OK) < 0)
+	if (access(argv[1], R_OK) < 0)
 		ft_error();
 	dup2(pipex.pipe[1], 1);
 	close(pipex.pipe[0]);
 	dup2(pipex.infile, 0);
-	pipex.cmds_args = ft_split(av[2], ' ');
-	pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmds_args[0]);
+	pipex.cmds_args = ft_split(argv[2], ' ');
+	pipex.cmd = get_cmd(pipex.cmd_p, pipex.cmds_args[0]);
 	if (!pipex.cmd)
 	{
 		ft_free(&pipex, 'c');
-		ft_error():
+		ft_error();
 		//ft_putstr_fd("Command not found\n", 2);
 		//exit(127);
 	}
@@ -127,26 +127,28 @@ void	child(t_pipex pipex, char **av, char **env)
 	exit(1);
 }
 
-void	parent(t_pipex pipex, char **av, char **env)
+void	parent(t_pipex pipex, char **argv, char **env)
 {
-	pipex.outfile = open(av[4], O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	if (access(av[4], W_OK) < 0)
+	pipex.outfile = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	if (access(argv[4], W_OK) < 0)
 	{
-		ft_dprintf(2, "pipex: %s: permission denied\n", av[4]);
-		exit(1);
+		ft_error();
+		//ft_putstr_fd("permission denied\n", 2);
+		//exit(1);
 	}
 	dup2(pipex.pipe[0], 0);
 	close(pipex.pipe[1]);
 	dup2(pipex.outfile, 1);
-	pipex.cmds_args = ft_split(av[3], ' ');
+	pipex.cmds_args = ft_split(argv[3], ' ');
 	if (pipex.cmds_args[0] == NULL)
 		exit(1);
-	pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmds_args[0]);
+	pipex.cmd = get_cmd(pipex.cmd_p, pipex.cmds_args[0]);
 	if (!pipex.cmd)
 	{
 		ft_free(&pipex, 'p');
-		ft_dprintf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
-		exit(127);
+		ft_error();
+		//ft_putstr_fd("Command not found\n", 2);
+		//exit(127);
 	}
 	execve(pipex.cmd, pipex.cmds_args, env);
 	exit(1);
@@ -154,13 +156,12 @@ void	parent(t_pipex pipex, char **av, char **env)
 
 int	main(int argc, char *argv[], char *envp[])
 {	
-	t_pipex		*pipex;
-	char		*path;
+	t_pipex		pipex;
 	int			stat;
 
 	if (argc != 5)
 	{
-		ft_putstr_fd("Wrong number of inputs", 2)
+		ft_putstr_fd("Wrong number of inputs", 2);
 		return (1);
 	}
 	if (pipe(pipex.pipe) < 0)

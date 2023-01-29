@@ -33,6 +33,9 @@
 /*to perror*/
 # include <stdio.h>
 
+/* errno */
+# include <errno.h>
+
 /*to libft*/
 # include "../libft/headers/libft.h"
 
