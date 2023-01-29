@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:27:44 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/29 20:58:22 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/29 22:16:44 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_pipex
 }			t_pipex;
 
 int			ft_error(void);
+int			fd_printf(int fd, const char *format, ...);
 void		ft_free(t_pipex *pipex, char c);
 void		close_pipes(t_pipex *pipex);
 char		*get_cmd(char **paths, char *cmd);

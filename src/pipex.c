@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/29 21:04:20 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/29 22:19:04 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../headers/pipex.h"
 
 char	*get_cmd(char **paths, char *cmd)
 {
@@ -53,9 +53,9 @@ void	child(t_pipex pipex, char **argv, char **env)
 {
 	pipex.infile = open(argv[1], O_RDONLY);
 	if (access(argv[1], F_OK) < 0)
-		ft_error();
+		fd_printf("pipex: %s: No such file or directory\n", argv[1]);
 	if (access(argv[1], R_OK) < 0)
-		ft_error();
+		fd_printf("pipex: %s: Permission denied\n", argv[1]);
 	dup2(pipex.pipe[1], 1);
 	close(pipex.pipe[0]);
 	dup2(pipex.infile, 0);

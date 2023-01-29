@@ -1,36 +1,32 @@
 #include "../inc/libft.h"
 
-static void	ft_putchar_fd(int fd, char c)
-{
-	write(fd, &c, 1);
-}
-
-static void	ft_putstr(int fd, char *str)
+int	ft_puts_fd(int fd, char *str)
 {
 	size_t	idx;
 
 	idx = -1;
 	if (!str)
-		ft_putstr(fd, "(null)");
-	write(fd, str, ft_strlen(str));
+		return(ft_puts_fd(fd, "(null)"));
+	return(write(fd, str, ft_strlen(str)));
 }
 
-void	fd_printf(int fd, char *s, ...)
+int	fd_printf(int fd, const char *format, ...)
 {
-	va_list	ap;
-	int		i;
+	int			idx;
+	size_t		count;
+	va_list		args;
 
-	i = -1;
-	va_start(ap, s);
-	while (s[++i])
+	idx = 0;
+	count = 0;
+	va_start(args, format);
+	while (format[idx])
 	{
-		if (s[i] == '%')
-		{
-			if (s[++i] == 's')
-				ft_putstr(fd, va_arg(ap, char *));
-		}
-		else
-			ft_putchar_fd(fd, s[i]);
+		if (format[idx] != '%')
+			count += ft_putchar_len(fd, format[idx]);
+		if (format[idx] == '%' && format[idx + 1] == 's')
+			count += ft_puts_fd(fd, va_arg(args, char *));
+		idx++;
 	}
-	va_end(ap);
+	va_end(args);
+	return (count);
 }
