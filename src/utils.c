@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/29 20:53:40 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/29 21:08:36 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/30 06:20:20 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,16 @@ void	ft_free(t_pipex *pipex, char flag)
 	free(pipex->cmd_p);
 }
 
-//Do I need this..?
 int	check_cmd(char *cmd)
 {
 	if (access(cmd, F_OK) < 0)
 	{
-		ft_error();
+		fd_printf(2, "Command doesn't exist");
+		exit(126);
 	}
 	if (access(cmd, X_OK) < 0)
 	{
-		ft_putstr_fd("Permissions denied, weeb", 2);
+		fd_printf(2, "Access denied, weeb");
 		exit(126);
 	}
 	return (1);
@@ -75,14 +75,14 @@ char	*get_path(char **env)
 	return (path);
 }
 
-/*void print_array(char **array)
+void print_array(char **array)
 {
 	size_t idx;
 
 	idx = 0;
 	while (array[idx])
 	{
-		ft_printf("%s\n", array[idx]);
+		fd_printf(2, "%s\n", array[idx]);
 		idx++;
 	}
-}*/
+}

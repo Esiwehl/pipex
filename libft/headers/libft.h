@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/11 11:47:48 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/16 14:51:04 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/01/30 06:37:05 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,16 @@ typedef struct s_list
 	void			*content;
 	struct s_list	*next;
 }	t_list;
+
+typedef struct s_split_list
+{
+	char	limit;
+	size_t	idx;
+	size_t	jdx;
+	
+	size_t	wordlen;
+	char	*str;
+}	t_split;
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);

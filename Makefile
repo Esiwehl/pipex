@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/01/20 21:23:36 by ewehl         ########   odam.nl          #
+#    Updated: 2023/01/30 01:03:17 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ LIBFT			= libft
 SRC_DIR			= src/
 OBJ_DIR			= obj/
 
-SRCS			= pipex.c \
+SRCS			= pipex.c utils.c fd_printf.c \
 
 OBJS			= $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
 
@@ -29,14 +29,14 @@ RM				= rm -Rf
 
 AR				= ar rcs
 
-GITMSG			?= default_value_if_not_set_in_environment
+GITMSG			?= "Commit by Makefile."
 
 all : $(NAME)
 
 $(NAME) : $(OBJS)
 	@echo "$(GREY)	Working on these gdamn pipes..$(WHITE)"
 	@@make -s -C $(LIBFT)
-	@$(CC) $(IFLAGS) $(CFLAGS) $(LIBFT)/libft.a $(OBJ_DIR)/pipex.o -o $@
+	@$(CC) $(IFLAGS) $(CFLAGS) $(LIBFT)/libft.a $(OBJS) -o $@
 	@echo "$(GREEN)	Pipes are up.$(WHITE)"
 
 $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
