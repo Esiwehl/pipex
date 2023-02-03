@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:27:44 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/02 00:32:06 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/03 22:11:22 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,5 @@ int			check_cmd(char *cmd);
 char		**ft_split_cmds(char const *s, char c);
 void		child(t_pipex pipex, char **av, char **envp);
 void		parent(t_pipex pipex, char **av, char **envp);
-
-void print_array(char **array);
 
 #endif
