@@ -1,6 +1,6 @@
-Work on parser for cmds
-Work on parser for path
-Work on storage for previously parsed data.
+Work on parser for cmds. DONE
+Work on parser for path. DONE
+Work on storage for previously parsed data. DONE
 
 Am I supposed to open the file, write to it and then close it?
 i think so yeah, in the sense that I write the output of the 
