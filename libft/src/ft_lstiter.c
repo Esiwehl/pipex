@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/17 17:10:52 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/16 13:33:00 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/01 18:51:27 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	ft_lstiter(t_list *lst, void (*f)(void *))
 		return ;
 	while (lst)
 	{
-		(*f)(lst -> content);
+		f(lst -> content);
 		lst = lst -> next;
 	}
 }

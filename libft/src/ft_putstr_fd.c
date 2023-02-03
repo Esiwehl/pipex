@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/12 11:04:38 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/29 22:10:46 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/01 18:49:10 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	ft_putstr_fd(char *s, int fd)
 {
-	size_t	idx;
-
-	idx = 0;
 	write(fd, s, ft_strlen(s));
 }
 

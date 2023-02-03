@@ -6,18 +6,27 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/11 17:31:38 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/22 20:33:15 by ewehl         ########   odam.nl         */
+/*   Updated: 2022/10/24 11:04:08 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	is_delim(char s, char c)
+static char	**free_me(char **s, int max)
 {
-	return (s == c);
+	int	idx;
+
+	idx = 0;
+	while (s[idx] && idx < max)
+	{
+		free(s[idx]);
+		idx++;
+	}
+	free(s);
+	return (NULL);
 }
 
-static int	get_idxcount(char const *s, char c)
+static int	get_wordc(char const *s, char c)
 {
 	int	count;
 	int	idx;
@@ -26,12 +35,12 @@ static int	get_idxcount(char const *s, char c)
 	count = 0;
 	while (s[idx] != '\0')
 	{
-		while (s[idx] && is_delim(s[idx], c))
+		while (s[idx] && (s[idx] == c))
 			idx++;
-		if (s[idx] && !is_delim(s[idx], c))
+		if (s[idx])
 		{
 			count++;
-			while (s[idx] && !is_delim(s[idx], c))
+			while (s[idx] && (s[idx] != c))
 				idx++;
 		}
 	}
@@ -44,13 +53,13 @@ static char	*mallnput_word(char const *s, char c)
 	int		idx;
 
 	idx = 0;
-	while (s[idx] && !is_delim(s[idx], c))
+	while (s[idx] && (s[idx] != c))
 		idx++;
 	word = malloc(sizeof(char) * (idx + 1));
 	if (!word)
 		return (NULL);
 	idx = 0;
-	while (s[idx] && !is_delim(s[idx], c))
+	while (s[idx] && (s[idx] != c))
 	{
 		word[idx] = s[idx];
 		idx++;
@@ -66,20 +75,15 @@ static char	**actual_splitncheck(char **dest, char const *s, char c)
 	x = 0;
 	while (*s != '\0')
 	{
-		while (*s && is_delim(*s, c))
+		while (*s && (*s == c))
 			s++;
-		if (*s && !is_delim(*s, c))
+		if (*s && (*s != c))
 		{
 			dest[x] = mallnput_word(s, c);
 			if (dest[x] == NULL)
-			{
-				while (x--)
-					free(dest[x]);
-				free(dest);
-				return (NULL);
-			}
+				return (free_me(dest, x));
 			x++;
-			while (*s && !is_delim(*s, c))
+			while (*s && (*s != c))
 				s++;
 		}
 	}
@@ -92,7 +96,7 @@ char	**ft_split(char const *s, char c)
 	char	**dest;
 	int		words;
 
-	words = get_idxcount(s, c);
+	words = get_wordc(s, c);
 	dest = (char **)malloc(sizeof(char *) * (words + 1));
 	if (!dest)
 		return (NULL);
@@ -101,15 +105,12 @@ char	**ft_split(char const *s, char c)
 
 // int main()
 // {
-// 	char str[] = "__Deze_Zin___Moet_Worden_Gesplit";
-// 	char c = '_';
+// 	char str[] = "Deze\0Zin\0Moet_Worden_Gesplit\0";
+// 	char c = '\0';
 // 	char **holder;
 
 // 	holder = ft_split(str, c);
-// 	for (size_t i = 0; i< 5; i++)
+// 	for (size_t i = 0; i< 2; i++)
 // 		printf("str[%lu] = %s\n", i, holder[i]);
 // 	free(holder);
 // }
-// get no. of words
-// get allocate mem for substr
-// put in split arr.
