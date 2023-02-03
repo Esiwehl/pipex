@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/29 20:53:40 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/30 06:20:20 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/03 22:02:41 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,16 +73,4 @@ char	*get_path(char **env)
 	}
 	path = ft_strdup(ft_strtrim(env[idx], "PATH="));
 	return (path);
-}
-
-void print_array(char **array)
-{
-	size_t idx;
-
-	idx = 0;
-	while (array[idx])
-	{
-		fd_printf(2, "%s\n", array[idx]);
-		idx++;
-	}
 }
