@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/01/30 01:03:17 by ewehl         ########   odam.nl          #
+#    Updated: 2023/02/01 23:39:49 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ LIBFT			= libft
 SRC_DIR			= src/
 OBJ_DIR			= obj/
 
-SRCS			= pipex.c utils.c fd_printf.c \
+SRCS			= pipex.c utils.c fd_printf.c ft_split_cmds.c\
 
 OBJS			= $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
 
