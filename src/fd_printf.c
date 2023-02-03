@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/30 00:58:41 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/30 02:54:46 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/02 01:21:36 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ int	fd_printf(int fd, const char *format, ...)
 			count += ft_putc_fd(fd, format[idx]);
 		if (format[idx] == '%' && format[++idx] == 's')
 			count += ft_puts_fd(fd, va_arg(args, char *));
+		else if (format[idx] == 'c' && format[idx - 1] == '%')
+			count += ft_putc_fd(fd, va_arg(args, int));
 		idx++;
 	}
 	va_end(args);
