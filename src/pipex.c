@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/01/30 06:18:00 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/03 21:12:26 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,21 +62,20 @@ void	child(t_pipex pipex, char **argv, char **env)
 	pipex.infile = open(argv[1], O_RDONLY);
 	if (access(argv[1], F_OK) < 0)
 	{
-		fd_printf(STDERR_FILENO,
-			"pipex: %s: No such file or directory\n", argv[1]);
+		fd_printf(2, "pipex: %s: No such file or directory\n", argv[1]);
 		exit(0);
 	}
 	if (access(argv[1], R_OK) < 0)
 	{
-		fd_printf(STDERR_FILENO,
-			"pipex: %s: Permission denied\n", argv[1]);
+		fd_printf(2, "pipex: %s: Permission denied\n", argv[1]);
 		exit(0);
 	}
 	dup2(pipex.pipe[1], 1);
 	close(pipex.pipe[0]);
 	dup2(pipex.infile, 0);
 	// close(pipex.infile);
-	pipex.cmds_args = ft_split(argv[2], ' ');
+	pipex.cmds_args = ft_split_cmds(argv[2], ' ');
+	// fd_printf(2, "pipex.cmds_args = %s\n", pipex.cmds_args[0]);
 	// printf("Child cmds_args= %s\n", pipex.cmds_args[0]);
 	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
 	// printf("cmd = %s\n", pipex.cmd);
@@ -103,18 +102,18 @@ void	parent(t_pipex pipex, char **argv, char **env)
 	close(pipex.pipe[1]);
 	dup2(pipex.outfile, 1);
 	// close(pipex.outfile);
-	pipex.cmds_args = ft_split(argv[3], ' ');
-	print_array(pipex.cmds_args);
+	pipex.cmds_args = ft_split_cmds(argv[3], ' ');
+	// fd_printf(2, "pipex.cmds_args = %s\n", pipex.cmds_args[0]);
+	// print_array(pipex.cmds_args);
 	// printf("Parent cmds_args= %s\n", pipex.cmds_args[0]);
 	if (pipex.cmds_args[0] == NULL)
 		exit(1);
 	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
-	perror(pipex.cmd);
 	// printf("P_cmd = %s\n", pipex.cmd);
 	if (!pipex.cmd)
 	{
 		fd_printf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
-		ft_free(&pipex, 'c');// Do I have leaks?
+		ft_free(&pipex, 'c');
 		exit(127);
 	}
 	execve(pipex.cmd, pipex.cmds_args, env);
