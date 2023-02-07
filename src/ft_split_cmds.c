@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/11 17:31:38 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/03 21:14:52 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/07 12:52:46 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,13 @@ static int	get_wordc(char const *s, char c)
 		count++;
 		if (s[idx] == 34 || s[idx] == 39)
 		{
+			// fd_printf(2, "here?\n");
 			nxt = ft_strrchr(&s[idx + 1], s[idx]);
-			if (!nxt)
-				return (-1);
+			// if (!nxt)
+			// 	return (-1);
 			idx += (nxt - &s[idx] + 1);
+			if (idx > (int) ft_strlen(s))
+				idx = (int) ft_strlen(s);
 		}
 		while (s[idx] && (s[idx] != c) && (s[idx] != 34) && (s[idx] != 39))
 			idx++;
@@ -102,6 +105,9 @@ char	**ft_split_cmds(char const *s, char c)
 	int		wc;
 
 	wc = get_wordc(s, c);
+	char *wc2 = ft_itoa(wc);
+	// fd_printf(2, "wc in splitcmds = %s", wc2);
+	free(wc2);
 	if (wc == -1)
 		return (NULL);
 	dest = (char **)malloc(sizeof(char *) * (wc + 1));

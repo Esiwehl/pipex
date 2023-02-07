@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/03 22:15:38 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/07 13:18:33 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,10 @@ char	*wayfinder(char **paths, char *cmd)
 	size_t	idx;
 
 	idx = 0;
-	if (cmd[0] == '.')
+	if ((cmd[0] == '.') || ((ft_strrchr(cmd, '/')) && access(cmd, F_OK) == 0))
+	{
 		if (check_cmd(cmd) == 1)
 			return (cmd);
-	if (cmd[0] == '/')
-	{
-		cmd = ft_strrchr(cmd, '/');
-		if (!cmd)
-			return (NULL);
 	}
 	while (paths[idx])
 	{
@@ -68,8 +64,11 @@ void	child(t_pipex pipex, char **argv, char **env)
 	dup2(pipex.pipe[1], 1);
 	close(pipex.pipe[0]);
 	dup2(pipex.infile, 0);
+	// fd_printf(2, "argv[2]= %s\n", argv[2]);
 	pipex.cmds_args = ft_split_cmds(argv[2], ' ');
+	// fd_printf(2, "cmdargs in c: %s\n", pipex.cmds_args[0]);
 	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
+	// fd_printf(2, "cmd in c = %s\n", pipex.cmd);
 	if (!pipex.cmd)
 	{
 		fd_printf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
@@ -95,6 +94,7 @@ void	parent(t_pipex pipex, char **argv, char **env)
 	if (pipex.cmds_args[0] == NULL)
 		exit(1);
 	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
+	// fd_printf(2, "cmd in p = %s\n", pipex.cmd);
 	if (!pipex.cmd)
 	{
 		fd_printf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);

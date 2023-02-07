@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/29 20:53:40 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/03 22:02:41 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/07 12:55:28 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@ int	check_cmd(char *cmd)
 {
 	if (access(cmd, F_OK) < 0)
 	{
-		fd_printf(2, "Command doesn't exist");
+		fd_printf(2, "pipex: %s: command not found\n", cmd);
 		exit(126);
 	}
 	if (access(cmd, X_OK) < 0)
 	{
-		fd_printf(2, "Access denied, weeb");
+		fd_printf(2, "pipex: %s: Permission denied\n", cmd);
 		exit(126);
 	}
 	return (1);
