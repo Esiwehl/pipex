@@ -6,21 +6,25 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/02/01 23:39:49 by ewehl         ########   odam.nl          #
+#    Updated: 2023/02/07 21:51:37 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= pipex
 
 HEADERF	= headers/pipex.h
+BONUS_HEADERF = headers/pipex_bonus.h
 
 LIBFT			= libft
 SRC_DIR			= src/
+SRC_B_DIR		= bonus/
 OBJ_DIR			= obj/
 
-SRCS			= pipex.c utils.c fd_printf.c ft_split_cmds.c\
+SRCS			= pipex.c utils.c fd_printf.c ft_split_cmds.c
+SRCS_BONUS		= pipex_bonus.c $(SRCS)
 
 OBJS			= $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
+BONUS_OBJS			= $(addprefix $(OBJ_DIR), $(SRCS_BONUS:.c=.o))
 
 CC				= cc
 CFLAGS			= -Wall -Wextra -Werror
@@ -30,6 +34,7 @@ RM				= rm -Rf
 AR				= ar rcs
 
 GITMSG			?= "Commit by Makefile."
+
 
 all : $(NAME)
 
@@ -43,6 +48,11 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
 	@mkdir -p $(@D)
 	@$(CC) $(IFLAGS) $(CFLAGS) -c $< -o $@
 
+bonus : $(BONUS_OBJS) $(BONUS_HEADERF)
+	@echo "$(GREY)	Tryharding..$(WHITE)"
+	@$(CC) $(IFLAGS) $(CFLAGS) $(LIBFT)/libft.a $(BONUS_OBJS) -o $(NAME)
+	@echo "$(GREEN) LETS GO $(WHITE)"
+			
 clean :
 	@echo "$(GREY)	I just-a cleaning lady... ¯\_(ツ)_/¯ $(WHITE)"
 	@make clean -s -C $(LIBFT)

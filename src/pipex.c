@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/07 13:18:33 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/07 22:29:50 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,19 @@ char	*wayfinder(char **paths, char *cmd)
 	return (NULL);
 }
 
-int	ft_fork(t_pipex pipex, char **argv, char **envp)
+int	ft_fork(t_pipex pipex, char *argv[], char *envp[])
 {
 	pipex.pid = fork();
 	if (pipex.pid == 0)
+	{
+		close(pipex.pipe[0]);
 		child(pipex, argv, envp);
+	}
 	else
+	{
+		close(pipex.pipe[1]);
 		parent(pipex, argv, envp);
+	}
 	return (pipex.pid);
 }
 
@@ -62,13 +68,10 @@ void	child(t_pipex pipex, char **argv, char **env)
 		exit(0);
 	}
 	dup2(pipex.pipe[1], 1);
-	close(pipex.pipe[0]);
+	close(pipex.pipe[1]);
 	dup2(pipex.infile, 0);
-	// fd_printf(2, "argv[2]= %s\n", argv[2]);
 	pipex.cmds_args = ft_split_cmds(argv[2], ' ');
-	// fd_printf(2, "cmdargs in c: %s\n", pipex.cmds_args[0]);
 	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
-	// fd_printf(2, "cmd in c = %s\n", pipex.cmd);
 	if (!pipex.cmd)
 	{
 		fd_printf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
@@ -88,7 +91,6 @@ void	parent(t_pipex pipex, char **argv, char **env)
 		exit(1);
 	}
 	dup2(pipex.pipe[0], 0);
-	close(pipex.pipe[1]);
 	dup2(pipex.outfile, 1);
 	pipex.cmds_args = ft_split_cmds(argv[3], ' ');
 	if (pipex.cmds_args[0] == NULL)
@@ -112,7 +114,7 @@ int	main(int argc, char *argv[], char *envp[])
 
 	if (argc != 5)
 	{
-		ft_putstr_fd("Invalid number of arguments", STDERR_FILENO);
+		fd_printf(STDERR_FILENO, "Invalid number of arguments");
 		exit(EXIT_FAILURE);
 	}
 	if (pipe(pipex.pipe) < 0)
@@ -123,7 +125,10 @@ int	main(int argc, char *argv[], char *envp[])
 	pipex.paths = get_path(envp);
 	pipex.cmd_p = ft_split(pipex.paths, ':');
 	if (ft_fork(pipex, argv, envp) < 0)
-		ft_error();
+	{
+		fd_printf(2, "I created a spoon, it was intentional.\n");
+		exit(1);
+	}
 	close_pipes(&pipex);
 	waitpid(pipex.pid, &stat, 0);
 	ft_free(&pipex, 'p');

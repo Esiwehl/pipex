@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/11 17:31:38 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/07 12:52:46 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/07 18:07:07 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,7 @@ static int	get_wordc(char const *s, char c)
 		count++;
 		if (s[idx] == 34 || s[idx] == 39)
 		{
-			// fd_printf(2, "here?\n");
 			nxt = ft_strrchr(&s[idx + 1], s[idx]);
-			// if (!nxt)
-			// 	return (-1);
 			idx += (nxt - &s[idx] + 1);
 			if (idx > (int) ft_strlen(s))
 				idx = (int) ft_strlen(s);
@@ -55,12 +52,12 @@ static int	get_wordc(char const *s, char c)
 	return (count);
 }
 
-static char	which_char(char compare, char original, int *idx)
+static char	dub_or_single_quote(char to_compare, char original, int *idx)
 {
-	if (compare == 34 || compare == 39)
+	if (to_compare == 34 || to_compare == 39)
 	{
 		*idx += 1;
-		return (compare);
+		return (to_compare);
 	}
 	return (original);
 }
@@ -81,7 +78,7 @@ static char	**fill_array(char **dest, char const *str, char c)
 	{
 		while (str[idx] && str[idx] == c)
 			idx++;
-		flag = which_char(str[idx], c, &idx);
+		flag = dub_or_single_quote(str[idx], c, &idx);
 		nxt = ft_strchr(&str[idx], flag);
 		if (!nxt)
 		{
@@ -105,9 +102,6 @@ char	**ft_split_cmds(char const *s, char c)
 	int		wc;
 
 	wc = get_wordc(s, c);
-	char *wc2 = ft_itoa(wc);
-	// fd_printf(2, "wc in splitcmds = %s", wc2);
-	free(wc2);
 	if (wc == -1)
 		return (NULL);
 	dest = (char **)malloc(sizeof(char *) * (wc + 1));
