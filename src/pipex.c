@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/07 22:29:50 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/08 22:08:49 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,20 @@ char	*wayfinder(char **paths, char *cmd)
 	return (NULL);
 }
 
-int	ft_fork(t_pipex pipex, char *argv[], char *envp[])
+int	ft_fork(t_pipex *pipex, char *argv[], char *envp[])
 {
-	pipex.pid = fork();
-	if (pipex.pid == 0)
+	pipex->pid = fork();
+	if (pipex->pid == 0)
 	{
-		close(pipex.pipe[0]);
-		child(pipex, argv, envp);
+		close(pipex->pipe[0]);
+		child(*pipex, argv, envp);
 	}
 	else
 	{
-		close(pipex.pipe[1]);
-		parent(pipex, argv, envp);
+		close(pipex->pipe[1]);
+		parent(*pipex, argv, envp);
 	}
-	return (pipex.pid);
+	return (pipex->pid);
 }
 
 void	child(t_pipex pipex, char **argv, char **env)
@@ -107,24 +107,29 @@ void	parent(t_pipex pipex, char **argv, char **env)
 	exit(1);
 }
 
-int	main(int argc, char *argv[], char *envp[])
+/*int	main(int argc, char *argv[], char *envp[])
 {	
 	t_pipex		pipex;
 	int			stat;
 
 	if (argc != 5)
 	{
-		fd_printf(STDERR_FILENO, "Invalid number of arguments");
+		fd_printf(STDERR_FILENO, "Invalid number of arguments\n");
 		exit(EXIT_FAILURE);
 	}
 	if (pipe(pipex.pipe) < 0)
 	{
-		fd_printf(STDERR_FILENO, "We are clogged..");
+		fd_printf(STDERR_FILENO, "We are clogged..\n");
 		exit (126);
 	}
 	pipex.paths = get_path(envp);
+	if (!pipex.paths)
+	{
+		fd_printf(2, "Path unset.\n");
+		exit(1);
+	}
 	pipex.cmd_p = ft_split(pipex.paths, ':');
-	if (ft_fork(pipex, argv, envp) < 0)
+	if (ft_fork(&pipex, argv, envp) < 0)
 	{
 		fd_printf(2, "I created a spoon, it was intentional.\n");
 		exit(1);
@@ -133,6 +138,6 @@ int	main(int argc, char *argv[], char *envp[])
 	waitpid(pipex.pid, &stat, 0);
 	ft_free(&pipex, 'p');
 	return (0);
-}
+}*/
 
 //Do I need two cmds_args for parent and child process?

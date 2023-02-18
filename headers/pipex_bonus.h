@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:27:44 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/07 21:58:50 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/08 22:04:41 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int			check_cmd(char *cmd);
 
 char		**ft_split_cmds(char const *s, char c);
 
-static void		process_uno(t_pipex pipex, char **argv, char **envp);
-static void		process_dos(t_pipex pipex, int argc, char **argv, char **envp);
+// static void		process_uno(t_pipex *pipex, char **argv, char **envp);
+// static void		process_dos(t_pipex *pipex, int argc, char **argv, char **envp);
 
 #endif
