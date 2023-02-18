@@ -6,21 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/29 20:53:40 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/08 20:10:20 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/18 20:28:38 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/pipex.h"
-
-int	ft_error(void)
-{
-	char	*msg;
-
-	msg = strerror(errno);
-	ft_putstr_fd(msg, 2);
-	ft_putstr_fd("\n", 2);
-	exit(errno);
-}
 
 void	close_pipes(t_pipex *pipex)
 {
@@ -45,14 +35,9 @@ void	ft_free(t_pipex *pipex, char flag)
 
 int	check_cmd(char *cmd)
 {
-	if (access(cmd, F_OK) < 0)
+	if (access(cmd, F_OK | X_OK) < 0)
 	{
-		fd_printf(2, "pipex: %s: command not found\n", cmd);
-		exit(126);
-	}
-	if (access(cmd, X_OK) < 0)
-	{
-		fd_printf(2, "pipex: %s: Permission denied\n", cmd);
+		fd_printf(2, "pipex: %s: %s", cmd, strerror(errno));
 		exit(126);
 	}
 	return (1);

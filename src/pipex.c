@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/08 22:08:49 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/18 20:41:06 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	parent(t_pipex pipex, char **argv, char **env)
 	exit(1);
 }
 
-/*int	main(int argc, char *argv[], char *envp[])
+int	main(int argc, char *argv[], char *envp[])
 {	
 	t_pipex		pipex;
 	int			stat;
@@ -120,7 +120,7 @@ void	parent(t_pipex pipex, char **argv, char **env)
 	if (pipe(pipex.pipe) < 0)
 	{
 		fd_printf(STDERR_FILENO, "We are clogged..\n");
-		exit (126);
+		exit (EXIT_FAILURE);
 	}
 	pipex.paths = get_path(envp);
 	if (!pipex.paths)
@@ -138,6 +138,6 @@ void	parent(t_pipex pipex, char **argv, char **env)
 	waitpid(pipex.pid, &stat, 0);
 	ft_free(&pipex, 'p');
 	return (0);
-}*/
+}
 
 //Do I need two cmds_args for parent and child process?
