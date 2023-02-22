@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/02/08 20:24:37 by ewehl         ########   odam.nl          #
+#    Updated: 2023/02/22 00:35:35 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ SRC_DIR			= src/
 SRC_B_DIR		= bonus/
 OBJ_DIR			= obj/
 
-SRCS			= pipex.c utils.c fd_printf.c ft_split_cmds.c
+SRCS			= pipex.c init.c file_management.c cmd_parsing.c utils.c fd_printf.c ft_split_cmds.c
 SRCS_BONUS		= pipex_bonus.c $(SRCS)
 
 OBJS			= $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
@@ -48,10 +48,10 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
 	@mkdir -p $(@D)
 	@$(CC) $(IFLAGS) $(CFLAGS) -c $< -o $@
 
-bonus : $(BONUS_OBJS) $(BONUS_HEADERF)
-	@echo "$(GREY)	Tryharding..$(WHITE)"
-	@$(CC) $(IFLAGS) $(CFLAGS) $(LIBFT)/libft.a $(BONUS_OBJS) -o $(NAME)
-	@echo "$(GREEN) LETS GO $(WHITE)"
+#bonus : $(BONUS_OBJS) $(BONUS_HEADERF)
+#	@echo "$(GREY)	Tryharding..$(WHITE)"
+#	@$(CC) $(IFLAGS) $(CFLAGS) $(LIBFT)/libft.a $(BONUS_OBJS) -o $(NAME)
+#	@echo "$(GREEN) LETS GO $(WHITE)"
 			
 clean :
 	@echo "$(GREY)	I just-a cleaning lady... ¯\_(ツ)_/¯ $(WHITE)"
@@ -67,7 +67,7 @@ re : fclean all
 	@echo "$(YELLOW)	Pls Stop making me work this hard. ಠ_ರೃ $(WHITE)"
 
 norm:
-	@norminette $(SRCS) $(HEADERF)
+	@norminette $(addprefix $(SRC_DIR), $(SRCS)) $(HEADERF)
 
 sendit:
 	@git add -u

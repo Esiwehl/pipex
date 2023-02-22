@@ -5,57 +5,84 @@
 /*                                                     +:+                    */
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/01/29 20:53:40 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/18 20:28:38 by ewehl         ########   odam.nl         */
+/*   Created: 2023/02/21 19:19:53 by ewehl         #+#    #+#                 */
+/*   Updated: 2023/02/22 17:39:27 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/pipex.h"
 
-void	close_pipes(t_pipex *pipex)
-{
-	close(pipex->pipe[0]);
-	close(pipex->pipe[1]);
-}
-
-void	ft_free(t_pipex *pipex, char flag)
+void	free_arr(char *str, char **dd_str)
 {
 	size_t	idx;
 
-	idx = 0;
-	if (flag == 'p')
-		close_pipes(pipex);
-	while (pipex->cmd_p[idx])
+	if (str)
 	{
-		free(pipex->cmd_p[idx]);
-		idx++;
+		free(str);
+		str = NULL;
 	}
-	free(pipex->cmd_p);
+	if (dd_str)
+	{
+		idx = 0;
+		while (dd_str[idx])
+		{
+			free(dd_str[idx]);
+			idx++;
+		}
+		free(dd_str);
+		dd_str = NULL;
+	}
 }
 
-int	check_cmd(char *cmd)
+static void	kill_mario(t_pipex *pipex)
 {
-	if (access(cmd, F_OK | X_OK) < 0)
-	{
-		fd_printf(2, "pipex: %s: %s", cmd, strerror(errno));
-		exit(126);
-	}
-	return (1);
-}
-
-char	*get_path(char **env)
-{
-	char	*path;
-	size_t	idx;
+	int	idx;
 
 	idx = 0;
-	while (env[idx] && ft_strncmp(env[idx], "PATH", 4))
-		idx++;
-	if (env[idx] == NULL)
+	while (idx < (pipex->cmd_cnt - 1) * 2)
 	{
-		path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:.";
-		return (path);
+		close(pipex->pipe_arr[idx]);
+		idx++;
 	}
-	path = ft_strdup(ft_strtrim(env[idx], "PATH="));
-	return (path);
+}
+
+void	close_fd(t_pipex *pipex)
+{
+	if (pipex->infile != -1)
+		close(pipex->infile);
+	if (pipex->outfile != -1)
+		close(pipex->outfile);
+	kill_mario(pipex);
+}
+
+void	clean_up(t_pipex *pipex)
+{
+	if (pipex)
+	{
+		close_fd(pipex);
+		if (pipex->pipe_arr)
+			free(pipex->pipe_arr);
+		if (pipex->pids)
+			free(pipex->pids);
+		if (pipex->cmd_p || pipex->cmd_args)
+			free_arr(pipex->cmd_p, pipex->cmd_args);
+		if (pipex->heredoc == 1)
+			unlink(".heredoc.tmp");
+	}
+}
+
+void	ft_error(t_pipex *p, char *msg, char *some_name, int exit_c)
+{
+	if (some_name)
+		fd_printf(2, "pipex: %s: %s\n", msg, some_name);
+	else if (!ft_strcmp(msg, "here_doc"))
+		fd_printf(2, "usage: ./pipex here_doc LIMITER cmd1 ... cmdn outfile\n");
+	else if (!ft_strcmp(msg, "standard"))
+		fd_printf(2, "usage: ./pipex infile cmd1 ... cmdn outfile\n");
+	else if (!p && !msg && !some_name)
+		exit(exit_c);
+	else if (msg)
+		fd_printf(2, "pipex: %s\n", msg);
+	clean_up(p);
+	exit(exit_c);
 }

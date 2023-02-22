@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/02/21 23:02:47 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/22 00:29:27 by ewehl         ########   odam.nl         */
+/*   Created: 2023/01/16 14:27:44 by ewehl         #+#    #+#                 */
+/*   Updated: 2023/02/07 20:22:44 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,49 +30,41 @@
 /* strerror */
 # include <string.h>
 
+/*to perror*/
+# include <stdio.h>
+
 /* errno */
 # include <errno.h>
 
-/* libft functions */
+/*to libft*/
 # include "../libft/headers/libft.h"
+
+// /* to get_next_line */
+// # include "get_next_line.h"
 
 typedef struct s_pipex
 {
-	char	**envp;
-	char	**argv;
-	int		argc;
-	int		heredoc;
+	pid_t	pid;
+	int		pipe[2];
 	int		infile;
 	int		outfile;
-	int		*pipe_arr;
-	int		cmd_cnt;
-	int		child;
-	int		*pids;
-	char	**cmd_args;
-	char	*cmd_p;
-}		t_pipex;
+	char	*paths;
+	char	**cmd_p;
+	char	**cmds_args;
+	char	*cmd;
+}			t_pipex;
 
-/*	init.c	*/
-void	blow_pipes(t_pipex *p);
-t_pipex	clean_init(void);
-t_pipex	init(int argc, char *argv[], char *envp[]);
+int			fd_printf(int fd, const char *format, ...);
+void		ft_free(t_pipex *pipex, char c);
+void		close_pipes(t_pipex *pipex);
+char		*wayfinder(char **paths, char *cmd);
+char		*find_path(char **envp);
+char		*get_path(char **env);
+int			check_cmd(char *cmd);
 
-/*	file_management.c	*/
-void	get_files(t_pipex *p);
-void	heredoc(t_pipex *p);
+char		**ft_split_cmds(char const *s, char c);
 
-/*	cmd_parsing.c	*/
-char	*get_cmd(char *cmd, t_pipex *pipex);
+void		child(t_pipex pipex, char **argv, char **envp);
+void		parent(t_pipex pipex, char **argv, char **envp);
 
-/*	ft_split_cmds.c	*/
-char	**ft_split_cmds(char const *s, char c);
-
-/*	fd_printf.c	*/
-int		fd_printf(int fd, const char *format, ...);
-
-/*	utils.c	*/
-void	close_fd(t_pipex *pipex);
-void	clean_up(t_pipex *pipex);
-void	ft_error(t_pipex *p, char *msg, char *some_name, int exit_c);
-void	free_arr(char *str, char **dd_str);
 #endif

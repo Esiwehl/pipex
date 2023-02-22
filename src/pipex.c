@@ -5,139 +5,133 @@
 /*                                                     +:+                    */
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/01/16 14:23:02 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/18 20:41:06 by ewehl         ########   odam.nl         */
+/*   Created: 2023/02/19 19:47:14 by ewehl         #+#    #+#                 */
+/*   Updated: 2023/02/22 17:38:46 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/pipex.h"
 
-char	*wayfinder(char **paths, char *cmd)
+/*
+	Redirects the input and output file descriptors by duplicating
+	the given fds to the standard input and standard output respectively.
+*/
+static void	io_redirect(int input, int output, t_pipex *p)
 {
-	char	*the_way;
-	size_t	idx;
-
-	idx = 0;
-	if ((cmd[0] == '.') || ((ft_strrchr(cmd, '/')) && access(cmd, F_OK) == 0))
+	if (dup2(input, STDIN_FILENO) == -1)
 	{
-		if (check_cmd(cmd) == 1)
-			return (cmd);
+		ft_error(p, "io_redirect - infile", strerror(errno), 1);
 	}
-	while (paths[idx])
+	if (dup2(output, STDOUT_FILENO) == -1)
 	{
-		paths[idx] = ft_strappend(paths[idx], "/");
-		the_way = ft_strjoin(paths[idx], cmd);
-		if (access(the_way, F_OK) == 0)
-		{
-			check_cmd(the_way);
-			return (the_way);
-		}
-		free(the_way);
-		idx++;
+		ft_error(p, "io_redirect - outfile", strerror(errno), 1);
 	}
-	return (NULL);
 }
 
-int	ft_fork(t_pipex *pipex, char *argv[], char *envp[])
+/* Kiek ff hoe het zit met redirection of multiple pipes.*/
+static void	child(t_pipex *p)
 {
-	pipex->pid = fork();
-	if (pipex->pid == 0)
-	{
-		close(pipex->pipe[0]);
-		child(*pipex, argv, envp);
-	}
+	if (p->child == 0)
+		io_redirect(p->infile, p->pipe_arr[1], p);
+	else if (p->child == p->cmd_cnt - 1)
+		io_redirect(p->pipe_arr[2 * p->child - 2], p->outfile, p);
 	else
-	{
-		close(pipex->pipe[1]);
-		parent(*pipex, argv, envp);
-	}
-	return (pipex->pid);
+		io_redirect(p->pipe_arr[2 * p->child - 2],
+			p->pipe_arr[2 * p->child + 1], p);
+	close_fd(p);
+	if (p->cmd_args == NULL || p->cmd_p == NULL)
+		ft_error(p, NULL, NULL, 127);
+	if (execve(p->cmd_p, p->cmd_args, p->envp) == -1)
+		ft_error(p, p->cmd_args[0], strerror(errno), 1);
 }
 
-void	child(t_pipex pipex, char **argv, char **env)
+static int	parent(t_pipex *p)
 {
-	pipex.infile = open(argv[1], O_RDONLY);
-	if (access(argv[1], F_OK) < 0)
+	pid_t	wpid;
+	int		status;
+	int		exit_c;
+
+	close_fd(p);
+	exit_c = 1;
+	while (p->child > 0)
 	{
-		fd_printf(2, "pipex: %s: No such file or directory\n", argv[1]);
-		exit(0);
+		wpid = waitpid(p->pids[p->child], &status, 0);
+		if (wpid == p->pids[p->cmd_cnt -1])
+		{
+			if ((wpid == p->pids[p->cmd_cnt - 1]) && WIFEXITED(status))
+				exit_c = WEXITSTATUS(status);
+		}
+		p->child--;
 	}
-	if (access(argv[1], R_OK) < 0)
-	{
-		fd_printf(2, "pipex: %s: Permission denied\n", argv[1]);
-		exit(0);
-	}
-	dup2(pipex.pipe[1], 1);
-	close(pipex.pipe[1]);
-	dup2(pipex.infile, 0);
-	pipex.cmds_args = ft_split_cmds(argv[2], ' ');
-	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
-	if (!pipex.cmd)
-	{
-		fd_printf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
-		ft_free(&pipex, 'c');
-		exit(127);
-	}
-	execve(pipex.cmd, pipex.cmds_args, env);
-	exit(1);
+	free(p->pipe_arr);
+	free(p->pids);
+	return (exit_c);
 }
 
-void	parent(t_pipex pipex, char **argv, char **env)
+int	pipex(t_pipex *p)
 {
-	pipex.outfile = open(argv[4], O_RDWR | O_TRUNC | O_CREAT, 0644);
-	if (access(argv[4], W_OK) < 0)
+	int	exit_c;
+
+	if (pipe(p->pipe_arr) == -1)
+		ft_error(p, strerror(errno), NULL, 1);
+	p->child = 0;
+	while (p->child < p->cmd_cnt)
 	{
-		fd_printf(2, "pipex: %s: permission denied\n", argv[4]);
-		exit(1);
+		p->cmd_args = ft_split_cmds(p->argv[p->child + 2 + p->heredoc], ' ');
+		if (!p->cmd_args)
+			ft_error(p, "something went wrong in split", NULL, 1);
+		p->cmd_p = get_cmd(p->cmd_args[0], p);
+		p->pids[p->child] = fork();
+		if (p->pids[p->child] == -1)
+			ft_error(p, "spooned", strerror(errno), 1);
+		else if (p->pids[p->child] == 0)
+			child(p);
+		free_arr(p->cmd_p, p->cmd_args);
+		p->child++;
 	}
-	dup2(pipex.pipe[0], 0);
-	dup2(pipex.outfile, 1);
-	pipex.cmds_args = ft_split_cmds(argv[3], ' ');
-	if (pipex.cmds_args[0] == NULL)
-		exit(1);
-	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
-	// fd_printf(2, "cmd in p = %s\n", pipex.cmd);
-	if (!pipex.cmd)
-	{
-		fd_printf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
-		ft_free(&pipex, 'c');
-		exit(127);
-	}
-	execve(pipex.cmd, pipex.cmds_args, env);
-	exit(1);
+	exit_c = parent(p);
+	if (p->heredoc == 1)
+		unlink(".heredoc.tmp");
+	return (exit_c);
 }
 
 int	main(int argc, char *argv[], char *envp[])
-{	
-	t_pipex		pipex;
-	int			stat;
+{
+	t_pipex	pip;
+	int		exit_code;
 
-	if (argc != 5)
+	if (argc < 5)
 	{
-		fd_printf(STDERR_FILENO, "Invalid number of arguments\n");
-		exit(EXIT_FAILURE);
+		if (argc >= 2 && !ft_strcmp(argv[1], "here_doc"))
+			ft_error(NULL, "here_doc", NULL, 2);
+		ft_error(NULL, "standard", NULL, 2);
 	}
-	if (pipe(pipex.pipe) < 0)
+	else if (argc < 6 && !ft_strcmp(argv[1], "here_doc"))
 	{
-		fd_printf(STDERR_FILENO, "We are clogged..\n");
-		exit (EXIT_FAILURE);
+		ft_error(NULL, "here_doc", NULL, 2);
 	}
-	pipex.paths = get_path(envp);
-	if (!pipex.paths)
-	{
-		fd_printf(2, "Path unset.\n");
-		exit(1);
-	}
-	pipex.cmd_p = ft_split(pipex.paths, ':');
-	if (ft_fork(&pipex, argv, envp) < 0)
-	{
-		fd_printf(2, "I created a spoon, it was intentional.\n");
-		exit(1);
-	}
-	close_pipes(&pipex);
-	waitpid(pipex.pid, &stat, 0);
-	ft_free(&pipex, 'p');
-	return (0);
+	if (!envp || !envp[0][0])
+		ft_error(NULL, "unexpected error", NULL, 1);
+	pip = init(argc, argv, envp);
+	exit_code = pipex(&pip);
+	return (exit_code);
 }
 
-//Do I need two cmds_args for parent and child process?
+/*
+			FIX HEADERFILE(S)
+			TEST
+			finish parsing -- DONE
+			add process exec -- DONE
+			start on exit and error handling
+				$? to fnd exit_code
+					0	Successful exit without errors
+					1	One or more generic errors encountered upon exit
+					2	Incorrect usage, such as invalid options or missing arguments
+					126	Command found but is not executable
+					127 Command not found. (Problem with $PATH || typo)
+	Fix return codes. [Can I just return errno?]
+
+	Maybe someday if you feel like it, make a search and match for the commands	
+	using structs and then their own little struct to store all that shizzle.
+	could be funny.
+*/

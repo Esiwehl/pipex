@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/07 15:50:33 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/09 00:30:01 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/19 19:56:35 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,10 +173,7 @@ int	main(int argc, char *argv[], char *envp[])
 		fd_printf(2, "We are clogged..");
 		exit (126);
 	}
-	char *tmp_piper = ft_itoa(pipex.pipe[0]);
-	char *tmp_pipew = ft_itoa(pipex.pipe[1]);
-	fd_printf(2, "in main pipe[0]: %s\tpipe[1]: %s\n", tmp_piper, tmp_pipew);
-	free(tmp_piper); free(tmp_pipew);
+	fd_printf(2, "in main pipe[0]: %d\tpipe[1]: %d\n", pipex.pipe[0], pipex.pipe[1]);
 	pipex.paths = get_path(envp);
 	pipex.cmd_p = ft_split(pipex.paths, ':');
 	init_pipex(&pipex, argc, argv);

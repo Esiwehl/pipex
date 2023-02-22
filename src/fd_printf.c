@@ -6,11 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/01/30 00:58:41 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/18 20:40:03 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/22 00:13:48 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../headers/pipex.h"
 
 static int	ft_putc_fd(int fd, char c)
 {
@@ -26,8 +26,8 @@ static int	ft_puts_fd(int fd, char *str)
 
 static int	ft_putnum_fd(int fd, int num)
 {
-	char *num_str;
-	int count;
+	char	*num_str;
+	int		count;
 
 	num_str = ft_itoa(num);
 	count = ft_puts_fd(fd, num_str);
@@ -59,8 +59,3 @@ int	fd_printf(int fd, const char *format, ...)
 	va_end(args);
 	return (count);
 }
-
-// int	ft_error()
-// {
-	// 
-// }
