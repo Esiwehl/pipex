@@ -6,20 +6,12 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/21 23:02:47 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/22 00:29:27 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/25 00:46:22 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
-
-/* to write, read, close, access, pipe, dup, dup2, execve, fork */
-# include <unistd.h>
-# include <sys/types.h>
-# include <sys/uio.h>
-
-/* malloc, free, exit */
-# include <stdlib.h>
 
 /* open, unlink */
 # include <fcntl.h>
@@ -58,6 +50,8 @@ t_pipex	clean_init(void);
 t_pipex	init(int argc, char *argv[], char *envp[]);
 
 /*	file_management.c	*/
+// void	get_infile(t_pipex *p);
+// void	get_outfile(t_pipex *p);
 void	get_files(t_pipex *p);
 void	heredoc(t_pipex *p);
 
@@ -72,7 +66,8 @@ int		fd_printf(int fd, const char *format, ...);
 
 /*	utils.c	*/
 void	close_fd(t_pipex *pipex);
-void	clean_up(t_pipex *pipex);
+void	clean_up(t_pipex *pipex, int exit_c);
 void	ft_error(t_pipex *p, char *msg, char *some_name, int exit_c);
+void	exit_error(int error_status, t_pipex *data);
 void	free_arr(char *str, char **dd_str);
 #endif

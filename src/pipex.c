@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/19 19:47:14 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/22 17:38:46 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/25 00:45:56 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,18 @@ static void	io_redirect(int input, int output, t_pipex *p)
 {
 	if (dup2(input, STDIN_FILENO) == -1)
 	{
-		ft_error(p, "io_redirect - infile", strerror(errno), 1);
+		ft_error(p, strerror(errno), NULL, 1);
 	}
 	if (dup2(output, STDOUT_FILENO) == -1)
 	{
-		ft_error(p, "io_redirect - outfile", strerror(errno), 1);
+		ft_error(p, strerror(errno), NULL, 1);
 	}
 }
 
 /* Kiek ff hoe het zit met redirection of multiple pipes.*/
 static void	child(t_pipex *p)
 {
+	// get_infile(p);
 	if (p->child == 0)
 		io_redirect(p->infile, p->pipe_arr[1], p);
 	else if (p->child == p->cmd_cnt - 1)
@@ -40,7 +41,7 @@ static void	child(t_pipex *p)
 			p->pipe_arr[2 * p->child + 1], p);
 	close_fd(p);
 	if (p->cmd_args == NULL || p->cmd_p == NULL)
-		ft_error(p, NULL, NULL, 127);
+		clean_up(p, 127);
 	if (execve(p->cmd_p, p->cmd_args, p->envp) == -1)
 		ft_error(p, p->cmd_args[0], strerror(errno), 1);
 }
@@ -51,14 +52,16 @@ static int	parent(t_pipex *p)
 	int		status;
 	int		exit_c;
 
+	// get_outfile(p);
 	close_fd(p);
+	p->child--;
 	exit_c = 1;
-	while (p->child > 0)
+	while (p->child >= 0)
 	{
 		wpid = waitpid(p->pids[p->child], &status, 0);
-		if (wpid == p->pids[p->cmd_cnt -1])
+		if (wpid == p->pids[p->cmd_cnt - 1])
 		{
-			if ((wpid == p->pids[p->cmd_cnt - 1]) && WIFEXITED(status))
+			if ((p->child == (p->cmd_cnt -1)) && WIFEXITED(status))
 				exit_c = WEXITSTATUS(status);
 		}
 		p->child--;
@@ -103,15 +106,13 @@ int	main(int argc, char *argv[], char *envp[])
 	if (argc < 5)
 	{
 		if (argc >= 2 && !ft_strcmp(argv[1], "here_doc"))
-			ft_error(NULL, "here_doc", NULL, 2);
-		ft_error(NULL, "standard", NULL, 2);
+			ft_error(NULL, "here_doc", NULL, 1);
+		ft_error(NULL, "standard", NULL, 1);
 	}
 	else if (argc < 6 && !ft_strcmp(argv[1], "here_doc"))
 	{
-		ft_error(NULL, "here_doc", NULL, 2);
+		ft_error(NULL, "here_doc", NULL, 1);
 	}
-	if (!envp || !envp[0][0])
-		ft_error(NULL, "unexpected error", NULL, 1);
 	pip = init(argc, argv, envp);
 	exit_code = pipex(&pip);
 	return (exit_code);
@@ -124,6 +125,8 @@ int	main(int argc, char *argv[], char *envp[])
 			add process exec -- DONE
 			start on exit and error handling
 				$? to fnd exit_code
+			CHECK FOR !cmd[0] --> mb this reason why I segfault?
+			Split bonus and mand, this is also fucking us up.
 					0	Successful exit without errors
 					1	One or more generic errors encountered upon exit
 					2	Incorrect usage, such as invalid options or missing arguments

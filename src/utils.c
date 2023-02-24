@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/21 19:19:53 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/22 17:39:27 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/25 00:18:23 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	close_fd(t_pipex *pipex)
 	kill_mario(pipex);
 }
 
-void	clean_up(t_pipex *pipex)
+void	clean_up(t_pipex *pipex, int exit_c)
 {
 	if (pipex)
 	{
@@ -69,8 +69,10 @@ void	clean_up(t_pipex *pipex)
 		if (pipex->heredoc == 1)
 			unlink(".heredoc.tmp");
 	}
+	exit(exit_c);
 }
 
+/* Fix your fucking if statements.*/
 void	ft_error(t_pipex *p, char *msg, char *some_name, int exit_c)
 {
 	if (some_name)
@@ -81,8 +83,8 @@ void	ft_error(t_pipex *p, char *msg, char *some_name, int exit_c)
 		fd_printf(2, "usage: ./pipex infile cmd1 ... cmdn outfile\n");
 	else if (!p && !msg && !some_name)
 		exit(exit_c);
-	else if (msg)
+	else if (p && msg)
 		fd_printf(2, "pipex: %s\n", msg);
-	clean_up(p);
-	exit(exit_c);
+	clean_up(p, exit_c);
+	
 }

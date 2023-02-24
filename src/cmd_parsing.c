@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/19 23:25:42 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/22 18:34:54 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/24 22:14:33 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,8 @@ static char	*get_env(char **envp)
 	idx = 0;
 	while (envp[idx] && ft_strncmp(envp[idx], "PATH", 4))
 		idx++;
-	// if (!envp[idx])
-	// 	path = NULL;
-	if (envp[idx] == NULL)
-	{
-		path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:.";
-		return (path);
-	}
+	if (!envp[idx])
+		path = NULL;
 	else
 		path = ft_strdup(ft_strtrim(envp[idx], "PATH="));
 	return (path);
@@ -74,6 +69,8 @@ static char	*cmd_pathfinder(char *cmd, char **paths)
 
 	idx = 0;
 	the_way = NULL;
+	if (!cmd || !paths)
+		return (NULL);
 	while (paths[idx])
 	{
 		the_way = ft_strjoin(paths[idx], cmd);
@@ -98,11 +95,9 @@ char	*get_cmd(char *cmd, t_pipex *pipex)
 	if (access(cmd, F_OK | X_OK) == 0)
 		return (ft_strdup(cmd));
 	env_p = get_paths(pipex->envp);
-	if (!env_p)
-		return (NULL);
 	cmd_p = cmd_pathfinder(cmd, env_p);
 	if (!cmd_p)
-		fd_printf(2, "pipex: %s: command not found\n", pipex->argv[pipex->child + 2]);
+		fd_printf(2, "pipex: %s: command not found\n", cmd);
 	free_arr(NULL, env_p);
 	return (cmd_p);
 }

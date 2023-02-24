@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/20 21:29:23 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/22 19:09:31 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/25 00:47:30 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	check_files(t_pipex *p, int io)
 	{
 		if (access(p->argv[p->argc -1], W_OK) < 0)
 			// ft_error(NULL, NULL, NULL, 1);
-			ft_error(NULL, p->argv[p->argc -1], strerror(errno), 1); // exitcode?
+			ft_error(NULL, p->argv[p->argc -1], strerror(errno), 1);
 	}
 }
 
@@ -49,25 +49,24 @@ void	get_files(t_pipex *p)
 	if (p->heredoc == 1)
 	{
 		heredoc(p);
-		p->infile = open(".heredoc.tmp", O_RDONLY);
-		check_files(p, 1);
-		if (p->infile == -1)
-			ft_error(p, NULL, NULL, 1);
-			// ft_error(p, ".heredoc.tmp", strerror(errno), 1);
 		p->outfile = open(p->argv[p->argc - 1],
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
 		check_files(p, 0);
 		if (p->outfile == -1)
 			ft_error(p, NULL, NULL, 1);
-			// ft_error(p, p->argv[p->argc - 1], strerror(errno), 1);
+		p->infile = open(".heredoc.tmp", O_RDONLY);
+		check_files(p, 1);
+		if (p->infile == -1)
+			ft_error(p, NULL, NULL, 1);
+			// ft_error(p, ".heredoc.tmp", strerror(errno), 1);
 	}
 	else
 	{
-		p->infile = open(p->argv[1], O_RDONLY, 0644);
-		check_files(p, 1);
 		p->outfile = open(p->argv[p->argc - 1],
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		check_files(p, 0);
+		p->infile = open(p->argv[1], O_RDONLY, 0644);
+		check_files(p, 1);
 	}
 }
 
