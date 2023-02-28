@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/02/01 18:38:01 by ewehl         ########   odam.nl          #
+#    Updated: 2023/02/26 22:15:07 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ SRCS			=	ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c ft_isascii.c
 					ft_strmapi.c ft_strncmp.c ft_strnstr.c ft_strrchr.c ft_strtrim.c ft_substr.c \
 					ft_tolower.c ft_toupper.c get_next_line.c ft_printf.c ft_putstr.c ft_putuint.c\
 					ft_puthex.c ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c \
-					ft_lstiter.c ft_lstlast.c ft_lstnew.c ft_lstmap.c ft_lstsize.c
+					ft_free_me.c ft_lstiter.c ft_lstlast.c ft_lstnew.c ft_lstmap.c ft_lstsize.c
 
 OBJS			= $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
 

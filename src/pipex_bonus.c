@@ -5,187 +5,130 @@
 /*                                                     +:+                    */
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/02/07 15:50:33 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/19 19:56:35 by ewehl         ########   odam.nl         */
+/*   Created: 2023/02/19 19:47:14 by ewehl         #+#    #+#                 */
+/*   Updated: 2023/02/28 15:05:55 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/pipex_bonus.h"
 
-int is_valid_fd(int fd)
+/*
+	Redirects the input and output file descriptors by duplicating
+	the given fds to the standard input and standard output respectively.
+*/
+static void	io_redirect(int input, int output, t_pipex *p)
 {
-    return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
+	if (dup2(input, STDIN_FILENO) == -1)
+		check_files(p, 1);
+	if (dup2(output, STDOUT_FILENO) == -1)
+		check_files(p, 0);
 }
 
-void	command_exe(t_pipex pipex, char *cmd)
+/* Kiek ff hoe het zit met redirection of multiple pipes.*/
+static void	child(t_pipex *p)
 {
-	pipex.cmds_args = ft_split_cmds(cmd, ' ');
-	if (pipex.cmds_args[0] == NULL)
-		exit(1);
-	pipex.cmd = wayfinder(pipex.cmd_p, pipex.cmds_args[0]);
-	fd_printf(2, "cmd exe: cmd = %s\n", pipex.cmd);
-	if (!pipex.cmd)
-	{
-		fd_printf(2, "pipex: %s: command not found\n", pipex.cmds_args[0]);
-		ft_free(&pipex, 'p');
-		exit(127);
-	}
-	execve(pipex.cmd, pipex.cmds_args, pipex.cmd_p); //idk if parsed env works
-	fd_printf(2, "pipex: %s: execve failed.\n", pipex.cmds_args);
-	ft_free(&pipex, 'p');
-	exit(1);
-}
-
-void	process_exe(t_pipex pipex, char *cmd)
-{
-	pipex.pid = fork();
-	if (pipex.pid < 0)
-	{
-		fd_printf(2, "Fork failed\n");
-		exit (1);
-	}
-	else if (pipex.pid == 0)
-	{
-		fd_printf(2, "CHILD Here\n");
-		close(pipex.pipe[0]);
-		char *tmp_piper = ft_itoa(pipex.pipe[0]);
-		char *tmp_pipew = ft_itoa(pipex.pipe[1]);
-		fd_printf(2, "in process pipe[0]: %s\tpipe[1]: %s\n", tmp_piper, tmp_pipew);
-		free(tmp_piper); free(tmp_pipew);
-		if (dup2(pipex.pipe[1], 1) < 0)
-		{
-			int fddup = is_valid_fd(pipex.pipe[1]);
-			char *fdupc = ft_itoa(fddup);
-			fd_printf(2, "fdupc = %s\n", fdupc);
-			free(fdupc);
-			fd_printf(2, "pipex: c dup failed\n");
-			exit (1);
-		}
-		close(pipex.pipe[1]);
-		command_exe(pipex, cmd);
-	}
+	if (p->child == 0)
+		io_redirect(p->infile, p->pipe_arr[1], p);
+	else if (p->child == p->cmd_cnt - 1)
+		io_redirect(p->pipe_arr[2 * p->child - 2], p->outfile, p);
 	else
-	{
-		fd_printf(2, "MAIN Here\n");
-		close(pipex.pipe[1]);
-		if (dup2(pipex.pipe[0], 0) < 0)
-		{
-			fd_printf(2, "pipex: m dup failed\n");
-			exit (1);
-		}
-		close(pipex.pipe[0]);
-		waitpid(pipex.pid, NULL, 0);
-	}
+		io_redirect(p->pipe_arr[2 * p->child - 2],
+			p->pipe_arr[2 * p->child + 1], p);
+	close_fd(p);
+	if (p->cmd_args == NULL || p->cmd_p == NULL)
+		clean_up(p, 127);
+	if (execve(p->cmd_p, p->cmd_args, p->envp) == -1)
+		ft_error(p, p->cmd_args[0], "command not found", 127);
 }
 
-void	write_till_limit(t_pipex *pipex, char *limit)
+static int	parent(t_pipex *p)
 {
-	char *line;
-	char *tmp_piper = ft_itoa(pipex->pipe[0]);
-	char *tmp_pipew = ft_itoa(pipex->pipe[1]);
-	fd_printf(2, "pipe[0]: %s\tpipe[1]: %s\n", tmp_piper, tmp_pipew);
-	free(tmp_piper); free(tmp_pipew);
-	close(pipex->pipe[0]);
-	fd_printf(1, "heredoc> ");
-	line = get_next_line(0);
-	while (line)
+	pid_t	wpid;
+	int		status;
+	int		exit_c;
+
+	close_fd(p);
+	p->child--;
+	exit_c = 1;
+	while (p->child >= 0)
 	{
-		fd_printf(2, "GNL Here\n");
-		if (ft_strncmp(limit, line, ft_strlen(limit)) == 0)
+		wpid = waitpid(p->pids[p->child], &status, 0);
+		if (wpid == p->pids[p->cmd_cnt - 1])
 		{
-			free(line);
-			close(pipex->pipe[1]);
-			exit(0);
+			if ((p->child == (p->cmd_cnt -1)) && WIFEXITED(status))
+				exit_c = WEXITSTATUS(status);
 		}
-		fd_printf(1, "heredoc> ");
-		fd_printf(pipex->pipe[0], "%s\n", line);						//You changed pipe[1] from pipe[0]
-		free(line);
-		line = get_next_line(0);
+		p->child--;
 	}
-	free(line);
-	close(pipex->pipe[1]);
-	fd_printf(2, "an error occurred while trying to write to fd\n");
+	free(p->pipe_arr);
+	free(p->pids);
+	return (exit_c);
 }
 
-void	heredoc(t_pipex *pipex, int argc, char *limiter)
+int	pipex(t_pipex *p)
 {
-	if (argc < 6)
-	{
-		fd_printf(2, "Invalid number of arguments");
-		exit(1);
-	}	
-	pipex->pid = fork();
-	if (pipex->pid == -1)
-	{
-		fd_printf(2, "Fork failed\n");
-		exit(1);
-	}
-	if (pipex->pid == 0)
-		write_till_limit(pipex, limiter);
-	else
-	{
-		close(pipex->pipe[1]);
-		dup2(pipex->pipe[0], 0);
-		close(pipex->pipe[0]);
-		waitpid(pipex->pid, NULL, 0);
-	}
-}
+	int	exit_c;
 
-void	init_pipex(t_pipex *pipex, int argc, char *argv[])
-{	
-	if (ft_strcmp(argv[1], "here_doc") == 0)
+	if (pipe(p->pipe_arr) == -1)
+		ft_error(p, strerror(errno), NULL, 1);
+	p->child = 0;
+	while (p->child < p->cmd_cnt)
 	{
-		pipex->cmd_idx = 3;
-		heredoc(pipex, argc, argv[2]);
-		pipex->outfile = open(argv[argc - 1], O_CREAT | O_WRONLY | O_APPEND,
-				0644);
-		if (pipex->outfile < 0)
-		{
-			fd_printf(2, "pipex: %s Error opening outfile\n", argv[argc - 1]);
-			exit (1);
-		}
+		p->cmd_args = ft_split_cmds(p->argv[p->child + 2 + p->heredoc], ' ');
+		if (!p->cmd_args)
+			ft_error(p, "something went wrong in split", NULL, 1);
+		p->cmd_p = get_cmd(p->cmd_args[0], p);
+		p->pids[p->child] = fork();
+		if (p->pids[p->child] == -1)
+			ft_error(p, "spooned", strerror(errno), 1);
+		else if (p->pids[p->child] == 0)
+			child(p);
+		free_arr(p->cmd_p, p->cmd_args);
+		p->child++;
 	}
-	else
-	{
-		pipex->cmd_idx = 2;
-		pipex->infile = open(argv[1], O_RDONLY);
-		pipex->outfile = open(argv[argc - 1], O_RDWR | O_TRUNC | O_CREAT, 0644);
-		if (dup2(pipex->infile, STDIN_FILENO) < 0)
-		{
-			fd_printf(2, "pipex: %s: dup failed\n", argv[argc - 1]);
-			exit (1);
-		}
-	}
+	exit_c = parent(p);
+	if (p->heredoc == 1)
+		unlink(".heredoc.tmp");
+	return (exit_c);
 }
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	t_pipex	pipex;
+	t_pipex	pip;
+	int		exit_code;
 
 	if (argc < 5)
 	{
-		fd_printf(2, "Not enough arguments.\n");
-		fd_printf(2, "Format ./pipex infile cmd1 cmd2 .. cmdx outfile\n");
-		exit (1);
+		if (argc >= 2 && !ft_strcmp(argv[1], "here_doc"))
+			ft_error(NULL, "here_doc", NULL, 1);
+		ft_error(NULL, "standard", NULL, 1);
 	}
-	if (pipe(pipex.pipe) < 0)
+	else if (argc < 6 && !ft_strcmp(argv[1], "here_doc"))
 	{
-		fd_printf(2, "We are clogged..");
-		exit (126);
+		ft_error(NULL, "here_doc", NULL, 1);
 	}
-	fd_printf(2, "in main pipe[0]: %d\tpipe[1]: %d\n", pipex.pipe[0], pipex.pipe[1]);
-	pipex.paths = get_path(envp);
-	pipex.cmd_p = ft_split(pipex.paths, ':');
-	init_pipex(&pipex, argc, argv);
-	while (pipex.cmd_idx < (argc - 2))
-	{
-		fd_printf(2, "Here\n");
-		char *tmp_idx = ft_itoa(pipex.cmd_idx);
-		fd_printf(2, "pipex.cmd_idx = %s\n", tmp_idx);
-		free(tmp_idx);
-		process_exe(pipex, argv[pipex.cmd_idx++]);
-	}
-	if (dup2(pipex.outfile, STDOUT_FILENO) < 0)
-		fd_printf(2, "pipex: %s: f dup failed\n", argv[argc - 1]);
-	command_exe(pipex, argv[argc - 2]);
+	pip = init(argc, argv, envp);
+	exit_code = pipex(&pip);
+	return (exit_code);
 }
+
+/*
+			FIX HEADERFILE(S)
+			TEST
+			finish parsing -- DONE
+			add process exec -- DONE
+			start on exit and error handling
+				$? to fnd exit_code
+			CHECK FOR !cmd[0] --> mb this reason why I segfault?
+			Split bonus and mand, this is also fucking us up.
+					0	Successful exit without errors
+					1	One or more generic errors encountered upon exit
+					2	Incorrect usage, such as invalid options or missing arguments
+					126	Command found but is not executable
+					127 Command not found. (Problem with $PATH || typo)
+	Fix return codes. [Can I just return errno?]
+
+	Maybe someday if you feel like it, make a search and match for the commands	
+	using structs and then their own little struct to store all that shizzle.
+	could be funny.
+*/

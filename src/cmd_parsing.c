@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/19 23:25:42 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/24 22:14:33 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/27 02:55:30 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,12 @@ static char	*cmd_pathfinder(char *cmd, char **paths)
 			free_arr(NULL, paths);
 			ft_error(NULL, "something went wrong in strjoin", NULL, 1);
 		}
-		if (access(the_way, F_OK | X_OK) == 0)
+		if (access(the_way, F_OK) == 0)
+		{	
+			if (access(the_way, X_OK) < 0)
+				ft_error(NULL, cmd, "Permission denied", 1);
 			return (the_way);
+		}
 		free_arr(the_way, NULL);
 		idx++;
 	}

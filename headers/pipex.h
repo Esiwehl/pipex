@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/21 23:02:47 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/25 00:46:22 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/27 06:08:18 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,8 @@ t_pipex	clean_init(void);
 t_pipex	init(int argc, char *argv[], char *envp[]);
 
 /*	file_management.c	*/
-// void	get_infile(t_pipex *p);
-// void	get_outfile(t_pipex *p);
+void	check_files(t_pipex *p, int io);
 void	get_files(t_pipex *p);
-void	heredoc(t_pipex *p);
 
 /*	cmd_parsing.c	*/
 char	*get_cmd(char *cmd, t_pipex *pipex);

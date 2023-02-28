@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   utils.c                                            :+:    :+:            */
+/*   utils_bonus.c                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/21 19:19:53 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/28 15:06:28 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/28 15:06:19 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,10 @@ void	ft_error(t_pipex *p, char *msg, char *some_name, int exit_c)
 {
 	if (some_name)
 		fd_printf(2, "pipex: %s: %s\n", msg, some_name);
+	else if (!ft_strcmp(msg, "here_doc"))
+		fd_printf(2, "usage: ./pipex here_doc LIMITER cmd1 ... cmdn outfile\n");
 	else if (!ft_strcmp(msg, "standard"))
-		fd_printf(2, "usage: ./pipex infile cmd1 cmd2 outfile\n");
+		fd_printf(2, "usage: ./pipex infile cmd1 ... cmdn outfile\n");
 	else if (!p && !msg && !some_name)
 		exit(exit_c);
 	else if (p && msg)

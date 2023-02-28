@@ -6,7 +6,7 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/02/19 19:47:14 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/25 00:45:56 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/28 15:05:42 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,14 @@
 static void	io_redirect(int input, int output, t_pipex *p)
 {
 	if (dup2(input, STDIN_FILENO) == -1)
-	{
-		ft_error(p, strerror(errno), NULL, 1);
-	}
+		check_files(p, 1);
 	if (dup2(output, STDOUT_FILENO) == -1)
-	{
-		ft_error(p, strerror(errno), NULL, 1);
-	}
+		check_files(p, 0);
 }
 
 /* Kiek ff hoe het zit met redirection of multiple pipes.*/
 static void	child(t_pipex *p)
 {
-	// get_infile(p);
 	if (p->child == 0)
 		io_redirect(p->infile, p->pipe_arr[1], p);
 	else if (p->child == p->cmd_cnt - 1)
@@ -43,7 +38,7 @@ static void	child(t_pipex *p)
 	if (p->cmd_args == NULL || p->cmd_p == NULL)
 		clean_up(p, 127);
 	if (execve(p->cmd_p, p->cmd_args, p->envp) == -1)
-		ft_error(p, p->cmd_args[0], strerror(errno), 1);
+		ft_error(p, p->cmd_args[0], "command not found", 127);
 }
 
 static int	parent(t_pipex *p)
@@ -52,7 +47,6 @@ static int	parent(t_pipex *p)
 	int		status;
 	int		exit_c;
 
-	// get_outfile(p);
 	close_fd(p);
 	p->child--;
 	exit_c = 1;
@@ -93,8 +87,6 @@ int	pipex(t_pipex *p)
 		p->child++;
 	}
 	exit_c = parent(p);
-	if (p->heredoc == 1)
-		unlink(".heredoc.tmp");
 	return (exit_c);
 }
 
@@ -103,15 +95,9 @@ int	main(int argc, char *argv[], char *envp[])
 	t_pipex	pip;
 	int		exit_code;
 
-	if (argc < 5)
+	if (argc != 5)
 	{
-		if (argc >= 2 && !ft_strcmp(argv[1], "here_doc"))
-			ft_error(NULL, "here_doc", NULL, 1);
 		ft_error(NULL, "standard", NULL, 1);
-	}
-	else if (argc < 6 && !ft_strcmp(argv[1], "here_doc"))
-	{
-		ft_error(NULL, "here_doc", NULL, 1);
 	}
 	pip = init(argc, argv, envp);
 	exit_code = pipex(&pip);

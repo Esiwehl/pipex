@@ -6,25 +6,11 @@
 /*   By: ewehl <ewehl@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/10/11 17:31:38 by ewehl         #+#    #+#                 */
-/*   Updated: 2023/02/08 20:02:09 by ewehl         ########   odam.nl         */
+/*   Updated: 2023/02/26 22:17:48 by ewehl         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-static char	**free_me(char **s, int max)
-{
-	int	idx;
-
-	idx = 0;
-	while (s[idx] && idx < max)
-	{
-		free(s[idx]);
-		idx++;
-	}
-	free(s);
-	return (NULL);
-}
 
 static int	get_wordc(char const *s, char c)
 {
@@ -81,7 +67,7 @@ static char	**actual_splitncheck(char **dest, char const *s, char c)
 		{
 			dest[x] = mallnput_word(s, c);
 			if (dest[x] == NULL)
-				return (free_me(dest, x));
+				return (free_me(dest));
 			x++;
 			while (*s && (*s != c))
 				s++;

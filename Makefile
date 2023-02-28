@@ -6,7 +6,7 @@
 #    By: ewehl <ewehl@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/10/28 13:55:15 by ewehl         #+#    #+#                  #
-#    Updated: 2023/02/22 00:35:35 by ewehl         ########   odam.nl          #
+#    Updated: 2023/02/27 07:15:49 by ewehl         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,14 +17,14 @@ BONUS_HEADERF = headers/pipex_bonus.h
 
 LIBFT			= libft
 SRC_DIR			= src/
-SRC_B_DIR		= bonus/
 OBJ_DIR			= obj/
 
-SRCS			= pipex.c init.c file_management.c cmd_parsing.c utils.c fd_printf.c ft_split_cmds.c
-SRCS_BONUS		= pipex_bonus.c $(SRCS)
+SRCS			= init.c cmd_parsing.c fd_printf.c ft_split_cmds.c
+SRCS_MAN		= pipex.c file_management.c utils.c $(SRCS)
+SRCS_BONUS		= pipex_bonus.c file_management_bonus.c utils_bonus.c $(SRCS)
 
-OBJS			= $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
-BONUS_OBJS			= $(addprefix $(OBJ_DIR), $(SRCS_BONUS:.c=.o))
+MAN_OBJS		= $(addprefix $(OBJ_DIR), $(SRCS_MAN:.c=.o))
+BONUS_OBJS		= $(addprefix $(OBJ_DIR), $(SRCS_BONUS:.c=.o))
 
 CC				= cc
 CFLAGS			= -Wall -Wextra -Werror
@@ -35,6 +35,11 @@ AR				= ar rcs
 
 GITMSG			?= "Commit by Makefile."
 
+ifdef WITH_BONUS
+OBJS			= $(BONUS_OBJS)
+else
+OBJS			= $(MAN_OBJS)
+endif
 
 all : $(NAME)
 
@@ -48,11 +53,9 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADERF)
 	@mkdir -p $(@D)
 	@$(CC) $(IFLAGS) $(CFLAGS) -c $< -o $@
 
-#bonus : $(BONUS_OBJS) $(BONUS_HEADERF)
-#	@echo "$(GREY)	Tryharding..$(WHITE)"
-#	@$(CC) $(IFLAGS) $(CFLAGS) $(LIBFT)/libft.a $(BONUS_OBJS) -o $(NAME)
-#	@echo "$(GREEN) LETS GO $(WHITE)"
-			
+bonus :
+	@$(MAKE) WITH_BONUS=true all
+	
 clean :
 	@echo "$(GREY)	I just-a cleaning lady... ¯\_(ツ)_/¯ $(WHITE)"
 	@make clean -s -C $(LIBFT)
@@ -67,14 +70,14 @@ re : fclean all
 	@echo "$(YELLOW)	Pls Stop making me work this hard. ಠ_ರೃ $(WHITE)"
 
 norm:
-	@norminette $(addprefix $(SRC_DIR), $(SRCS)) $(HEADERF)
+	@norminette $(addprefix $(SRC_DIR), $(SRCS)) $(addprefix $(SRC_DIR), $(SRCS_BONUS)) $(HEADERF)
 
 sendit:
 	@git add -u
 	@git commit -m $(GITMSG)
 	@git push
 
-.PHONY:		all clean fclean re norm sendit
+.PHONY:		all clean fclean re norm sendit bonus
 
 GREY	=	\033[0;30m
 RED		=	\033[0;31m
